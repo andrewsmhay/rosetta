@@ -44,9 +44,7 @@ chk_config_txt_fin = "Finished footprinting service startup state. Results store
 
 if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 	puts "This is a Debian / Ubuntu distro using the apt package manager."
-	if ARGV[1].chomp != (opt_sel[0] || opt_sel[1] || opt_sel[2])
-		puts opt_sel_err
-	elsif ARGV[1].chomp == 'pre'
+	if ARGV[1] == opt_sel[0]
 		if File.exist?("/usr/bin/apt-file")
 		else
 			puts "The 'apt-file' program is not installed...installing now."
@@ -102,7 +100,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		end
 		File.open(output_file_rc+fs_ext[0], "w"){ |f| f.write(rc_list_txt_fin)}
 	
-	elsif ARGV[1].chomp == 'post'
+	elsif ARGV[1] == opt_sel[1]
 		puts "Initalizing post-installation footprinting..."
 		# Filesystem footprinting
 		puts ""
@@ -145,15 +143,14 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		end
 		File.open(output_file_rc+fs_ext[1], "w"){ |f| f.write(rc_list_txt_fin)}
 
-	elsif ARGV[1].chomp == 'final'
+	elsif ARGV[1] == opt_sel[2]
 		puts "Initalizing post-analysis comparisons..."
-
 #
 #elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 #	puts "This is a Red Hat / CentOS based distro using the yum package manager."
 #elsif os_decided == "windows"
 #	puts "This is a Windows based distro."
-	else puts "The OS could not be detected or is not supported. Goodbye."
+	else puts opt_sel_err
 	end
 	#
 end
