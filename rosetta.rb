@@ -36,7 +36,7 @@ net_stat_txt = "Footprinting services..."
 output_file_net_stat = "services."
 net_stat_txt_fin = "Finished footprinting network ports. Results stored in " + output_file_net_stat
 apt_file_inst_chk = "/usr/bin/apt-get install chkconfig -y > /dev/null"
-chk_config = "chkconfig --list >"
+chk_config = "chkconfig --list > "
 chk_config_txt = "Footprinting service startup state..."
 output_file_chk_config = "chkconfig."
 chk_config_txt_fin = "Finished footprinting service startup state. Results stored in " + output_file_chk_config
@@ -95,7 +95,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		
 		# chkconfig --list > chkconfig.pre
 		puts chk_config_txt
-		system(chk_config+output_file_chk_config)
+		system(chk_config+output_file_chk_config+fs_ext[0])
 		puts chk_config_txt_fin+fs_ext[0]
 		
 		# find /etc/rc*.d/S* -executable && find /etc/init.d/ -not -path "/etc/init.d/" > startup.pre
