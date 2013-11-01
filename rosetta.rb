@@ -12,6 +12,8 @@ fs_find_file = "filesystem."
 apt_file_inst = "/usr/bin/apt-get install apt-file -y > /dev/null && /usr/bin/apt-file update > /dev/null"
 inputter = []
 fs_ext = ['pre', 'post', 'out']
+opt_sel = ['pre', 'post', 'final']
+opt_sel_err = "[-] Usage: ./rosetta.rb <package_name> <pre|post|final>"
 fs_footprint_fin = "Finished footprinting root filesystem. Results stored in " + fs_find_file
 fs_apt_file_txt = "Footprinting package contents..."
 
@@ -26,9 +28,11 @@ output_file_rc = "startup."
 group_list_txt_fin = []
 output_file_group = "group."
 group_list_txt = "Finished footprinting groups. Results stored in " + output_file_group
+group_list_txt_fp = "Footprinting groups..."
 user_list_txt_fin = []
 output_file_user = "user."
 user_list_txt = "Finished footprinting users. Results stored in " + output_file_user
+user_list_txt_fp = "Footprinting users..."
 net_stat = "/bin/netstat -tulpn > "
 net_stat_txt = "Footprinting services..."
 output_file_net_stat = "services."
@@ -41,89 +45,111 @@ chk_config_txt_fin = "Finished footprinting service startup state. Results store
 
 if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 	puts "This is a Debian / Ubuntu distro using the apt package manager."
-	if ARGV[1] == 'pre'
-		# apt-get install apt-file -y && apt-file update
+	if ARGV[1] != (opt_sel[0] || opt_sel[1] || opt_sel[2])
+		puts opt_sel_err
+	elsif ARGV[1] == 'pre'
 		if File.exist?("/usr/bin/apt-file")
-			#puts "The 'apt-file' program is already installed. Continuing..."
 		else
 			puts "The 'apt-file' program is not installed...installing now."
 			system(apt_file_inst)
 		end
 		if File.exist?("/sbin/chkconfig")
-			#puts "The 'chkconfig' program is already installed. Continuing..."
 		else
 			puts "The 'chkconfig' program is not installed...installing now."
 			system(apt_file_inst_chk)
 		end
-		
-		# find / | egrep -e '/proc/' -v | egrep -e '/dev/' -v > filesystem.pre
+		# Filesystem footprinting
 		puts ""
 		puts fs_footprint
 		Find.find('/') do |path|
- 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/")))
+ 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/")))
    				inputter << path + "\n"
    			end
- 			end
+ 		end
 		File.open(fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
-		puts fs_footprint_fin+fs_ext[0]
-
-		# apt-file list <package>
+		puts fs_footprint_fin+fs_ext[0]+"."
+		# Package contents
 		puts ""
 		puts fs_apt_file_txt
 		system(fs_apt_file)
 		puts fs_apt_file_txt_fin
-		
-		# netstat -tulpn > services.pre
+		# Network services
 		puts ""
 		puts net_stat_txt
 		system(net_stat+output_file_net_stat+fs_ext[0])
-		puts net_stat_txt_fin+fs_ext[0]
-
-		# cut -d ":" -f1,4 /etc/group > groups.pre
-		# WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		puts net_stat_txt_fin+fs_ext[0]+"."
+		# Group information
 		puts ""
-		puts group_list_txt
+		puts group_list_txt_fp
 		Etc.group {|g|
   			group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"
 		}
 		File.open(output_file_group+fs_ext[0], "w"){ |f| f.write(group_list_txt_fin)}
-		
-		# cut -d ":" -f1 /etc/shadow > users.pre
+		puts group_list_txt+fs_ext[0]+"."
+		# User information
 		puts ""
-		# WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		puts user_list_txt_fp
 		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
 		File.open(output_file_user+fs_ext[0], "w"){ |f| f.write(user_list_txt_fin)}
-		puts user_list_txt+fs_ext[0]
-		
-		# chkconfig --list > chkconfig.pre
+		puts user_list_txt+fs_ext[0]+"."
+		# CHKCONFIG Information
 		puts ""
 		puts chk_config_txt
 		system(chk_config+output_file_chk_config+fs_ext[0])
-		puts chk_config_txt_fin+fs_ext[0]
-		
-		# find /etc/rc*.d/S* -executable && find /etc/init.d/ -not -path "/etc/init.d/" > startup.pre
+		puts chk_config_txt_fin+fs_ext[0]+"."
+		# Startup binaries
 		puts ""
 		Dir.glob("/etc/rc?.d").each do |rc_list|
 			Find.find(rc_list) do |pathrc| rc_list_txt_fin << pathrc + "\n"
 			end
 		end
 		File.open(output_file_rc+fs_ext[0], "w"){ |f| f.write(rc_list_txt_fin)}
-		
+	
 	elsif ARGV[1] == 'post'
 		puts "Initalizing post-installation footprinting..."
-#		if File.exist?("/usr/bin/apt-file")
-#		else
-#			puts "The apt-file program is not installed...installing now."
-#			system(apt_file_inst)
-#		end
-#		puts fs_footprint
-#		Find.find('/') do |path|
-# 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/")))
-#   				inputter << path + "\n"
-# 			end
-#		puts fs_footprint_fin+fs_ext[1]
-#		File.open(fs_find_file+fs_ext[1], "w"){ |f| f.write(inputter)}
-#		
+		# Filesystem footprinting
+		puts ""
+		puts fs_footprint
+		Find.find('/') do |path|
+ 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/")))
+   				inputter << path + "\n"
+   			end
+ 		end
+		File.open(fs_find_file+fs_ext[1], "w"){ |f| f.write(inputter)}
+		puts fs_footprint_fin+fs_ext[1]+"."
+		# Package contents not required for post-install footprinting
+		# Network services
+		puts ""
+		puts net_stat_txt
+		system(net_stat+output_file_net_stat+fs_ext[1])
+		puts net_stat_txt_fin+fs_ext[1]+"."
+		# Group information
+		puts ""
+		puts group_list_txt_fp
+		Etc.group {|g|
+  			group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"
+		}
+		File.open(output_file_group+fs_ext[1], "w"){ |f| f.write(group_list_txt_fin)}
+		puts group_list_txt+fs_ext[1]+"."
+		# User information
+		puts ""
+		puts user_list_txt_fp
+		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
+		File.open(output_file_user+fs_ext[1], "w"){ |f| f.write(user_list_txt_fin)}
+		puts user_list_txt+fs_ext[1]+"."
+		# CHKCONFIG Information
+		puts ""
+		puts chk_config_txt
+		system(chk_config+output_file_chk_config+fs_ext[1])
+		puts chk_config_txt_fin+fs_ext[1]+"."
+		# Startup binaries
+		puts ""
+		Dir.glob("/etc/rc?.d").each do |rc_list|
+			Find.find(rc_list) do |pathrc| rc_list_txt_fin << pathrc + "\n"
+			end
+		end
+		File.open(output_file_rc+fs_ext[1], "w"){ |f| f.write(rc_list_txt_fin)}
+
 	elsif ARGV[1] == 'final'
 		puts "Initalizing post-analysis comparisons..."
 #	else puts "Please try again..."
