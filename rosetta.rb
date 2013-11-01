@@ -22,7 +22,7 @@ ARGV.each {|arg| commands << arg}
 
 package_name = ARGV[0]
 fs_apt_file = "apt-file list " + package_name + " | grep -e share -v | cut -d " " -f2 > " + package_name+"package"
-fs_apt_file_txt_fin = "Finished footprinting " + package_name + ". Results stored in " +package_name+"package."
+fs_apt_file_txt_fin = "Finished footprinting " + package_name + ". Results stored in " +package_name+".package."
 rc_list_txt_fin = []
 output_file_rc = "startup."
 group_list_txt_fin = []
