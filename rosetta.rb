@@ -81,9 +81,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		# Group information
 		puts ""
 		puts group_list_txt_fp
-		Etc.group {|g|
-  			group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"
-		}
+		Etc.group {|g| group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
 		File.open(output_file_group+fs_ext[0], "w"){ |f| f.write(group_list_txt_fin)}
 		puts group_list_txt+fs_ext[0]+"."
 		# User information
@@ -126,9 +124,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		# Group information
 		puts ""
 		puts group_list_txt_fp
-		Etc.group {|g|
-  			group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"
-		}
+		Etc.group {|g| group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
 		File.open(output_file_group+fs_ext[1], "w"){ |f| f.write(group_list_txt_fin)}
 		puts group_list_txt+fs_ext[1]+"."
 		# User information
