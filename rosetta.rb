@@ -253,5 +253,3 @@ end
 #	puts "This is a Windows based distro."
 else puts opt_sel_err
 end
-	#
-end
