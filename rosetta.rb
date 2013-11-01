@@ -46,13 +46,13 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 	if ARGV[1] == 'pre'
 		# apt-get install apt-file -y && apt-file update
 		if File.exist?("/usr/bin/apt-file")
-			puts "The 'apt-file' program is already installed. Continuing..."
+			#puts "The 'apt-file' program is already installed. Continuing..."
 		else
 			puts "The 'apt-file' program is not installed...installing now."
 			system(apt_file_inst)
 		end
 		if File.exist?("/sbin/chkconfig")
-			puts "The 'chkconfig' program is already installed. Continuing..."
+			#puts "The 'chkconfig' program is already installed. Continuing..."
 		else
 			puts "The 'chkconfig' program is not installed...installing now."
 			system(apt_file_inst_chk)
@@ -63,6 +63,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		Find.find('/') do |path|
  			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/")))
    				inputter << path + "\n"
+   			else puts "Cannot generate filesystem output."
  			end
 		puts fs_footprint_fin+fs_ext[0]
 		File.open(fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
@@ -88,8 +89,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		# cut -d ":" -f1 /etc/shadow > users.pre
 		# WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		puts user_list_txt+fs_ext[0]
-		Etc.passwd {|u|
-			user_list_txt_fin << u.name + " = " + u.gecos + "\n"
+		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"
 		}
 		File.open(output_file_user+fs_ext[0], "w"){ |f| f.write(user_list_txt_fin)}
 		puts user_list_txt+fs_ext[0]
@@ -101,19 +101,16 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		
 		# find /etc/rc*.d/S* -executable && find /etc/init.d/ -not -path "/etc/init.d/" > startup.pre
 		Dir.glob("/etc/rc?.d").each do |rc_list|
-			Find.find(rc_list) do |pathrc|	
-			rc_list_txt_fin << pathrc + "\n"
+			Find.find(rc_list) do |pathrc| rc_list_txt_fin << pathrc + "\n"
 			end
 		end
 		File.open(output_file_rc+fs_ext[0], "w"){ |f| f.write(rc_list_txt_fin)}
 		end
 
 
-
-
 		
-#	elsif ARGV[1] == '--phase post'
-#		puts "Initalizing post-installation footprinting..."
+	elsif ARGV[1] == 'post'
+		puts "Initalizing post-installation footprinting..."
 #		if File.exist?("/usr/bin/apt-file")
 #		else
 #			puts "The apt-file program is not installed...installing now."
@@ -127,8 +124,8 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 #		puts fs_footprint_fin+fs_ext[1]
 #		File.open(fs_find_file+fs_ext[1], "w"){ |f| f.write(inputter)}
 #		
-#	elsif ARGV[1] == '--phase final'
-#		puts "Initalizing post-analysis comparisons..."
+	elsif ARGV[1] == 'final'
+		puts "Initalizing post-analysis comparisons..."
 #	else puts "Please try again..."
 #
 #elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
@@ -137,7 +134,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 #	puts "This is a Red Hat / CentOS based distro using the rpm package manager."
 #elsif os_decided == "windows"
 #	puts "This is a Windows based distro."
-#else print "The OS could not be detected or is not supported. Goodbye."
-#
+	else print "The OS could not be detected or is not supported. Goodbye."
 	end
+	#
 end
