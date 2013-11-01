@@ -14,7 +14,7 @@ Rosetta was designed to automate the pre- and post-installation information gath
 
 ##Usage
 
-<code>./rosetta.rb <package_name> <pre|post|final>
+<pre><code>./rosetta.rb <package_name> <pre|post|final>
 
 e.g.
 ./rosetta.rb tomcat7 pre
@@ -39,7 +39,7 @@ Finished footprinting users. Results stored in user.pre.
 Footprinting service startup state...
 Finished footprinting service startup state. Results stored in chkconfig.pre.
 
-</code>
+</code></pre>
 
 (Note: best to run as root or via a user with 'sudo' rights)
 
