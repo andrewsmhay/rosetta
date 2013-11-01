@@ -4,8 +4,6 @@ require './lib/determineos.rb'
 require 'find'
 require 'etc'
 
-
-
 os_select = Determineos.new
 os_decided = os_select.os.to_s
 workingdir = '.'
@@ -64,16 +62,16 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		Find.find('/') do |path|
  			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/")))
    				inputter << path + "\n"
-   			else puts "Cannot generate filesystem output."
+   			end
  			end
-		puts fs_footprint_fin+fs_ext[0]
 		File.open(fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
-		
+		puts fs_footprint_fin+fs_ext[0]
+
 		# apt-file list <package>
 		puts ""
 		puts fs_apt_file_txt
 		system(fs_apt_file)
-		puts fs_apt_file_txt_fin+fs_ext[0]
+		puts fs_apt_file_txt_fin
 		
 		# netstat -tulpn > services.pre
 		puts ""
@@ -93,7 +91,6 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		# cut -d ":" -f1 /etc/shadow > users.pre
 		puts ""
 		# WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		puts user_list_txt+fs_ext[0]
 		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
 		File.open(output_file_user+fs_ext[0], "w"){ |f| f.write(user_list_txt_fin)}
 		puts user_list_txt+fs_ext[0]
@@ -111,9 +108,6 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 			end
 		end
 		File.open(output_file_rc+fs_ext[0], "w"){ |f| f.write(rc_list_txt_fin)}
-		end
-
-
 		
 	elsif ARGV[1] == 'post'
 		puts "Initalizing post-installation footprinting..."
