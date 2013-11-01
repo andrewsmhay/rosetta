@@ -104,6 +104,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 			end
 		end
 		File.open(output_file_rc+fs_ext[0], "w"){ |f| f.write(rc_list_txt_fin)}
+	end
 
 
 
