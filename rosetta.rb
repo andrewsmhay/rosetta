@@ -21,7 +21,7 @@ commands = []
 ARGV.each {|arg| commands << arg}
 
 package_name = ARGV[0]
-fs_apt_file = "apt-file list " + package_name + " | grep -e share -v | cut -d " " -f2 > " + package_name+".package"
+fs_apt_file = "apt-file list " + package_name + " | grep -e share -v | cut -d ' ' -f2 > " + package_name+".package"
 fs_apt_file_txt_fin = "Finished footprinting " + package_name + ". Results stored in " +package_name+".package."
 rc_list_txt_fin = []
 output_file_rc = "startup."
@@ -89,8 +89,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		# cut -d ":" -f1 /etc/shadow > users.pre
 		# WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		puts user_list_txt+fs_ext[0]
-		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"
-		}
+		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
 		File.open(output_file_user+fs_ext[0], "w"){ |f| f.write(user_list_txt_fin)}
 		puts user_list_txt+fs_ext[0]
 		
