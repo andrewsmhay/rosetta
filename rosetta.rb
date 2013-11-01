@@ -78,16 +78,18 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		puts net_stat_txt_fin+fs_ext[0]
 
 		# cut -d ":" -f1,4 /etc/group > groups.pre
+		# WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		puts group_list_txt
 		Etc.group {|g|
-  			group_list_txt_fin << g.name + ": " + g.mem.join(', ')
+  			group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"
 		}
 		File.open(output_file_group+fs_ext[0], "w"){ |f| f.write(group_list_txt_fin)}
 		
 		# cut -d ":" -f1 /etc/shadow > users.pre
+		# WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		puts user_list_txt+fs_ext[0]
 		Etc.passwd {|u|
-			user_list_txt_fin << u.name + " = " + u.gecos
+			user_list_txt_fin << u.name + " = " + u.gecos + "\n"
 		}
 		File.open(output_file_user+fs_ext[0], "w"){ |f| f.write(user_list_txt_fin)}
 		puts user_list_txt+fs_ext[0]
