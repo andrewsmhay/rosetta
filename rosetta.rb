@@ -59,9 +59,10 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		end
 		
 		# find / | egrep -e '/proc/' -v | egrep -e '/dev/' -v > filesystem.pre
+		puts ""
 		puts fs_footprint
 		Find.find('/') do |path|
- 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/")))
+ 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/")))
    				inputter << path + "\n"
    			else puts "Cannot generate filesystem output."
  			end
@@ -69,17 +70,20 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		File.open(fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
 		
 		# apt-file list <package>
+		puts ""
 		puts fs_apt_file_txt
 		system(fs_apt_file)
 		puts fs_apt_file_txt_fin+fs_ext[0]
 		
 		# netstat -tulpn > services.pre
+		puts ""
 		puts net_stat_txt
 		system(net_stat+output_file_net_stat+fs_ext[0])
 		puts net_stat_txt_fin+fs_ext[0]
 
 		# cut -d ":" -f1,4 /etc/group > groups.pre
 		# WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		puts ""
 		puts group_list_txt
 		Etc.group {|g|
   			group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"
@@ -87,6 +91,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		File.open(output_file_group+fs_ext[0], "w"){ |f| f.write(group_list_txt_fin)}
 		
 		# cut -d ":" -f1 /etc/shadow > users.pre
+		puts ""
 		# WORKING!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		puts user_list_txt+fs_ext[0]
 		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
@@ -94,11 +99,13 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		puts user_list_txt+fs_ext[0]
 		
 		# chkconfig --list > chkconfig.pre
+		puts ""
 		puts chk_config_txt
 		system(chk_config+output_file_chk_config+fs_ext[0])
 		puts chk_config_txt_fin+fs_ext[0]
 		
 		# find /etc/rc*.d/S* -executable && find /etc/init.d/ -not -path "/etc/init.d/" > startup.pre
+		puts ""
 		Dir.glob("/etc/rc?.d").each do |rc_list|
 			Find.find(rc_list) do |pathrc| rc_list_txt_fin << pathrc + "\n"
 			end
