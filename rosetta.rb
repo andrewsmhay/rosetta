@@ -135,6 +135,6 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 #	puts "This is a Red Hat / CentOS based distro using the rpm package manager."
 #elsif os_decided == "windows"
 #	puts "This is a Windows based distro."
-else print "The OS could not be detected or is not supported. Goodbye."
-
-end
+#else print "The OS could not be detected or is not supported. Goodbye."
+#
+#end
