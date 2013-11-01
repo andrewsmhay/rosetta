@@ -46,9 +46,9 @@ chk_config_txt_fin = "Finished footprinting service startup state. Results store
 
 if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 	puts "This is a Debian / Ubuntu distro using the apt package manager."
-	if ARGV[1] != (opt_sel[0] || opt_sel[1] || opt_sel[2])
+	if ARGV[1].to_s != (opt_sel[0] || opt_sel[1] || opt_sel[2])
 		puts opt_sel_err
-	elsif ARGV[1] == 'pre'
+	elsif ARGV[1].to_s == 'pre'
 		if File.exist?("/usr/bin/apt-file")
 		else
 			puts "The 'apt-file' program is not installed...installing now."
@@ -104,7 +104,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		end
 		File.open(output_file_rc+fs_ext[0], "w"){ |f| f.write(rc_list_txt_fin)}
 	
-	elsif ARGV[1] == 'post'
+	elsif ARGV[1].to_s == 'post'
 		puts "Initalizing post-installation footprinting..."
 		# Filesystem footprinting
 		puts ""
@@ -147,7 +147,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		end
 		File.open(output_file_rc+fs_ext[1], "w"){ |f| f.write(rc_list_txt_fin)}
 
-	elsif ARGV[1] == 'final'
+	elsif ARGV[1].to_s == 'final'
 		puts "Initalizing post-analysis comparisons..."
 
 #
