@@ -1,5 +1,4 @@
 #Rosetta
-##About
 How can you secure your server if you have no idea what files, registry keys, users, groups, services, or other artifacts are created when an application is installed? Most vendor documentation fails to detail the intricacies of an application’s installation footprint down to individual files. This makes securing the application, not to mention the development of enterprise policies and procedures for the application, an arduous and ultimately ineffective task.
 
 Using a combination of malware analysis techniques, package management utilities, and some homegrown tools, anyone can understand exactly what an application is going to do to your server and how its installation impacts your attack surface area. With this knowledge in hand, an organization can translate the newly created application map to Chef, Puppet, and RightScale configuration scripts to better automate its server and application fleet deployments. The map can also be used to help tighten controls for more accurate and continuous operational and security monitoring of applications.
@@ -15,10 +14,10 @@ Rosetta was designed to automate the pre- and post-installation information gath
 ##Usage
 
 <pre>
-./rosetta.rb package_name pre|post|final
+./rosetta.rb <i>package_name</i> <i>pre|post|final</i>
 
 e.g.
-./rosetta.rb tomcat7 pre
+<b>./rosetta.rb tomcat7 pre</b>
 
 This is a Debian / Ubuntu distro using the apt package manager.
 
