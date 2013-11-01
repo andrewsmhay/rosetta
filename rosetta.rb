@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
-
 require './lib/determineos.rb'
 require 'find'
 require 'etc'
+require 'diffy'
+# Read in pre and post installation files, generate unique master_list.txt file
 
 os_select = Determineos.new
 os_decided = os_select.os.to_s
@@ -13,7 +14,7 @@ apt_file_inst = "/usr/bin/apt-get install apt-file -y > /dev/null && /usr/bin/ap
 inputter = []
 fs_ext = ['pre', 'post', 'out']
 opt_sel = ['pre', 'post', 'final']
-opt_sel_err = "[-] Usage: ./rosetta.rb <package_name> <pre|post|final>"
+opt_sel_err = "[-] Usage: ./rosetta.rb <package_name <pre> | <post|final>"
 fs_footprint_fin = "Finished footprinting root filesystem. Results stored in " + fs_find_file
 fs_apt_file_txt = "Footprinting package contents..."
 
@@ -148,15 +149,13 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 
 	elsif ARGV[1] == 'final'
 		puts "Initalizing post-analysis comparisons..."
-#	else puts "Please try again..."
+
 #
 #elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 #	puts "This is a Red Hat / CentOS based distro using the yum package manager."
-#elsif os_decided == "nix" && File.exist?("/usr/bin/rpm")
-#	puts "This is a Red Hat / CentOS based distro using the rpm package manager."
 #elsif os_decided == "windows"
 #	puts "This is a Windows based distro."
-	else print "The OS could not be detected or is not supported. Goodbye."
+	else puts "The OS could not be detected or is not supported. Goodbye."
 	end
 	#
 end
