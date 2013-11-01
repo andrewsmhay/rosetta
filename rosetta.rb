@@ -4,6 +4,8 @@ require './lib/determineos.rb'
 require 'find'
 require 'etc'
 
+
+
 os_select = Determineos.new
 os_decided = os_select.os.to_s
 workingdir = '.'
@@ -15,10 +17,8 @@ fs_ext = ['pre', 'post', 'out']
 fs_footprint_fin = "Finished footprinting root filesystem. Results stored in " + fs_find_file
 fs_apt_file_txt = "Footprinting package contents..."
 
-if ARGV.size != 1 then
-  puts "n[-] Usage: ./rosetta.rb <package name> --phase <pre|post|final>"
-  exit
-end
+commands = []
+ARGV.each {|arg| commands << arg}
 
 package_name = ARGV[0]
 fs_apt_file = "apt-file list " + package_name + " | grep -e share -v | cut -d " " -f2 > " + package_name+"package"
@@ -43,7 +43,7 @@ chk_config_txt_fin = "Finished footprinting service startup state. Results store
 
 if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 	puts "This is a Debian / Ubuntu distro using the apt package manager."
-	if ARGV[1] == '--phase pre'
+	if ARGV[1] == 'pre'
 		# apt-get install apt-file -y && apt-file update
 		if File.exist?("/usr/bin/apt-file")
 			puts "The 'apt-file' program is already installed. Continuing..."
@@ -104,7 +104,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 			end
 		end
 		File.open(output_file_rc+fs_ext[0], "w"){ |f| f.write(rc_list_txt_fin)}
-	end
+		end
 
 
 
@@ -137,4 +137,5 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 #	puts "This is a Windows based distro."
 #else print "The OS could not be detected or is not supported. Goodbye."
 #
-#end
+	end
+end
