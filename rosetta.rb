@@ -109,40 +109,31 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 
 
 		
-	elsif ARGV[1] == '--phase post'
-		puts "Initalizing post-installation footprinting..."
-		if File.exist?("/usr/bin/apt-file")
-		else
-			puts "The apt-file program is not installed...installing now."
-			system(apt_file_inst)
-		end
-		puts fs_footprint
-		Find.find('/') do |path|
- 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/")))
-   				inputter << path + "\n"
- 			end
-		puts fs_footprint_fin+fs_ext[1]
-		File.open(fs_find_file+fs_ext[1], "w"){ |f| f.write(inputter)}
-		
-	elsif ARGV[1] == '--phase final'
-		puts "Initalizing post-analysis comparisons..."
-	else puts "Please try again..."
-
-elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
-	puts "This is a Red Hat / CentOS based distro using the yum package manager."
-elsif os_decided == "nix" && File.exist?("/usr/bin/rpm")
-	puts "This is a Red Hat / CentOS based distro using the rpm package manager."
-elsif os_decided == "windows"
-	puts "This is a Windows based distro."
+#	elsif ARGV[1] == '--phase post'
+#		puts "Initalizing post-installation footprinting..."
+#		if File.exist?("/usr/bin/apt-file")
+#		else
+#			puts "The apt-file program is not installed...installing now."
+#			system(apt_file_inst)
+#		end
+#		puts fs_footprint
+#		Find.find('/') do |path|
+# 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/")))
+#   				inputter << path + "\n"
+# 			end
+#		puts fs_footprint_fin+fs_ext[1]
+#		File.open(fs_find_file+fs_ext[1], "w"){ |f| f.write(inputter)}
+#		
+#	elsif ARGV[1] == '--phase final'
+#		puts "Initalizing post-analysis comparisons..."
+#	else puts "Please try again..."
+#
+#elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
+#	puts "This is a Red Hat / CentOS based distro using the yum package manager."
+#elsif os_decided == "nix" && File.exist?("/usr/bin/rpm")
+#	puts "This is a Red Hat / CentOS based distro using the rpm package manager."
+#elsif os_decided == "windows"
+#	puts "This is a Windows based distro."
 else print "The OS could not be detected or is not supported. Goodbye."
 
 end
-
-
-
-
-
-
-
-
-
