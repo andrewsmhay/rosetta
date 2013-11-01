@@ -21,7 +21,7 @@ commands = []
 ARGV.each {|arg| commands << arg}
 
 package_name = ARGV[0]
-fs_apt_file = "apt-file list " + package_name + " | grep -e share -v | cut -d " " -f2 > " + package_name+"package"
+fs_apt_file = "apt-file list " + package_name + " | grep -e share -v | cut -d " " -f2 > " + package_name+".package"
 fs_apt_file_txt_fin = "Finished footprinting " + package_name + ". Results stored in " +package_name+".package."
 rc_list_txt_fin = []
 output_file_rc = "startup."
@@ -75,7 +75,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		
 		# netstat -tulpn > services.pre
 		puts net_stat_txt
-		system(net_stat+output_file_net_stat)
+		system(net_stat+output_file_net_stat+fs_ext[0])
 		puts net_stat_txt_fin+fs_ext[0]
 
 		# cut -d ":" -f1,4 /etc/group > groups.pre
