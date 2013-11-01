@@ -62,7 +62,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		puts ""
 		puts fs_footprint
 		Find.find('/') do |path|
- 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/")))
+ 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum")))
    				inputter << path + "\n"
    			end
  		end
@@ -109,7 +109,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		puts ""
 		puts fs_footprint
 		Find.find('/') do |path|
- 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/")))
+ 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum")))
    				inputter << path + "\n"
    			end
  		end
@@ -159,17 +159,12 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 		puts ""
 		puts fs_footprint
 		Find.find('/') do |path|
- 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/")))
+ 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum")))
    				inputter << path + "\n"
    			end
  		end
 		File.open(fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
 		puts fs_footprint_fin+fs_ext[0]+"."
-		# Package contents
-		puts ""
-		puts fs_apt_file_txt
-		system(fs_apt_file)
-		puts fs_apt_file_txt_fin
 		# Network services
 		puts ""
 		puts net_stat_txt
@@ -206,13 +201,12 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 		puts ""
 		puts fs_footprint
 		Find.find('/') do |path|
- 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/")))
+ 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum")))
    				inputter << path + "\n"
    			end
  		end
 		File.open(fs_find_file+fs_ext[1], "w"){ |f| f.write(inputter)}
 		puts fs_footprint_fin+fs_ext[1]+"."
-		# Package contents not required for post-install footprinting
 		# Network services
 		puts ""
 		puts net_stat_txt
@@ -251,5 +245,18 @@ end
 #####################
 #elsif os_decided == "windows"
 #	puts "This is a Windows based distro."
+#   Filesystem footprinting
+#	puts ""
+#	puts fs_footprint
+#	Find.find('/') do |path|
+# 			inputter << path + "\n"
+#		end
+#	File.open(fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
+#	puts fs_footprint_fin+fs_ext[0]+"."
+#
+# Win32::Registry::HKEY_LOCAL_MACHINE.open('SOFTWARE\') do |reg|
+# reg.each_value { |name, type, data| ... }        # Enumerate values
+# reg.each_key { |key, wtime| ... }                # Enumerate subkeys
+# end
 else puts opt_sel_err
 end
