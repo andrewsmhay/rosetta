@@ -148,6 +148,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 
 	elsif ARGV[1] == opt_sel[2]
 		puts "Initalizing post-analysis comparisons..."
+	end
 ######################
 # Red Hat and CentOS #
 ######################
@@ -244,12 +245,13 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 
 	elsif ARGV[1] == opt_sel[2]
 		puts "Initalizing post-analysis comparisons..."
+end
 #####################
 # Microsoft Windows #
 #####################
 #elsif os_decided == "windows"
 #	puts "This is a Windows based distro."
-	else puts opt_sel_err
-	end
+else puts opt_sel_err
+end
 	#
 end
