@@ -42,6 +42,9 @@ chk_config_txt = "Footprinting service startup state..."
 output_file_chk_config = "chkconfig."
 chk_config_txt_fin = "Finished footprinting service startup state. Results stored in " + output_file_chk_config
 
+#####################
+# Debian and Ubuntu #
+#####################
 if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 	puts "This is a Debian / Ubuntu distro using the apt package manager."
 	if ARGV[1] == opt_sel[0]
@@ -145,9 +148,105 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 
 	elsif ARGV[1] == opt_sel[2]
 		puts "Initalizing post-analysis comparisons..."
-#
-#elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
-#	puts "This is a Red Hat / CentOS based distro using the yum package manager."
+######################
+# Red Hat and CentOS #
+######################
+elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
+	if ARGV[1] == opt_sel[0]
+		puts "This is a Red Hat / CentOS based distro using the yum package manager."
+		# Filesystem footprinting
+		puts ""
+		puts fs_footprint
+		Find.find('/') do |path|
+ 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/")))
+   				inputter << path + "\n"
+   			end
+ 		end
+		File.open(fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
+		puts fs_footprint_fin+fs_ext[0]+"."
+		# Package contents
+		puts ""
+		puts fs_apt_file_txt
+		system(fs_apt_file)
+		puts fs_apt_file_txt_fin
+		# Network services
+		puts ""
+		puts net_stat_txt
+		system(net_stat+output_file_net_stat+fs_ext[0])
+		puts net_stat_txt_fin+fs_ext[0]+"."
+		# Group information
+		puts ""
+		puts group_list_txt_fp
+		Etc.group {|g| group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
+		File.open(output_file_group+fs_ext[0], "w"){ |f| f.write(group_list_txt_fin)}
+		puts group_list_txt+fs_ext[0]+"."
+		# User information
+		puts ""
+		puts user_list_txt_fp
+		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
+		File.open(output_file_user+fs_ext[0], "w"){ |f| f.write(user_list_txt_fin)}
+		puts user_list_txt+fs_ext[0]+"."
+		# CHKCONFIG Information
+		puts ""
+		puts chk_config_txt
+		system(chk_config+output_file_chk_config+fs_ext[0])
+		puts chk_config_txt_fin+fs_ext[0]+"."
+		# Startup binaries
+		puts ""
+		Dir.glob("/etc/rc?.d").each do |rc_list|
+			Find.find(rc_list) do |pathrc| rc_list_txt_fin << pathrc + "\n"
+			end
+		end
+		File.open(output_file_rc+fs_ext[0], "w"){ |f| f.write(rc_list_txt_fin)}
+	
+	elsif ARGV[1] == opt_sel[1]
+		puts "Initalizing post-installation footprinting..."
+		# Filesystem footprinting
+		puts ""
+		puts fs_footprint
+		Find.find('/') do |path|
+ 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/")))
+   				inputter << path + "\n"
+   			end
+ 		end
+		File.open(fs_find_file+fs_ext[1], "w"){ |f| f.write(inputter)}
+		puts fs_footprint_fin+fs_ext[1]+"."
+		# Package contents not required for post-install footprinting
+		# Network services
+		puts ""
+		puts net_stat_txt
+		system(net_stat+output_file_net_stat+fs_ext[1])
+		puts net_stat_txt_fin+fs_ext[1]+"."
+		# Group information
+		puts ""
+		puts group_list_txt_fp
+		Etc.group {|g| group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
+		File.open(output_file_group+fs_ext[1], "w"){ |f| f.write(group_list_txt_fin)}
+		puts group_list_txt+fs_ext[1]+"."
+		# User information
+		puts ""
+		puts user_list_txt_fp
+		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
+		File.open(output_file_user+fs_ext[1], "w"){ |f| f.write(user_list_txt_fin)}
+		puts user_list_txt+fs_ext[1]+"."
+		# CHKCONFIG Information
+		puts ""
+		puts chk_config_txt
+		system(chk_config+output_file_chk_config+fs_ext[1])
+		puts chk_config_txt_fin+fs_ext[1]+"."
+		# Startup binaries
+		puts ""
+		Dir.glob("/etc/rc?.d").each do |rc_list|
+			Find.find(rc_list) do |pathrc| rc_list_txt_fin << pathrc + "\n"
+			end
+		end
+		File.open(output_file_rc+fs_ext[1], "w"){ |f| f.write(rc_list_txt_fin)}
+
+	elsif ARGV[1] == opt_sel[2]
+		puts "Initalizing post-analysis comparisons..."
+#####################
+# Microsoft Windows #
+#####################
 #elsif os_decided == "windows"
 #	puts "This is a Windows based distro."
 	else puts opt_sel_err
