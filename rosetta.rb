@@ -2,6 +2,7 @@
 require './lib/determineos.rb'
 require 'find'
 require 'etc'
+require './lib/rdiff.rb'
 
 os_select = Determineos.new
 os_decided = os_select.os.to_s
@@ -148,6 +149,12 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 
 	elsif ARGV[1] == opt_sel[2]
 		puts "Initalizing post-analysis comparisons..."
+		Dir.glob("/*.pre") do |rb_file|
+			f1 = IO.readlines(rb_file).map(&:chomp)
+			f2 = IO.readlines(rb_file.gsub(/pre/, 'post')).map(&:chomp)
+			File.open(rb_file.gsub(/pre/, fs_ext[2]),"w"){ |f| f.write((f1-f2).join("\n")) }
+		end
+		puts "Post-analysis comparisons completed."
 	end
 ######################
 # Red Hat and CentOS #
@@ -239,7 +246,13 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 
 	elsif ARGV[1] == opt_sel[2]
 		puts "Initalizing post-analysis comparisons..."
-end
+		Dir.glob("/*.pre") do |rb_file|
+			f1 = IO.readlines(rb_file).map(&:chomp)
+			f2 = IO.readlines(rb_file.gsub(/pre/, 'post')).map(&:chomp)
+			File.open(rb_file.gsub(/pre/, fs_ext[2]),"w"){ |f| f.write((f1-f2).join("\n")) }
+		end
+		puts "Post-analysis comparisons completed."
+	end
 #####################
 # Microsoft Windows #
 #####################
