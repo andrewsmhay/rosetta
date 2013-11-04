@@ -2,7 +2,6 @@
 require './lib/determineos.rb'
 require 'find'
 require 'etc'
-require './lib/rdiff.rb'
 
 os_select = Determineos.new
 os_decided = os_select.os.to_s
