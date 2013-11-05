@@ -72,37 +72,37 @@ Post-analysis comparisons completed.
 The scripts generate pre, post, and out (final) files for each configuration item tracked.
 
 ####Services configured to start, by run level
-chkconfig.pre
-chkconfig.post
-chkconfig.out
+* chkconfig.pre
+* chkconfig.post
+* chkconfig.out
 
 ####Probable configuration files
-config_files.post
+* config_files.post
 
 ####File system
-filesystem.pre
-filesystem.post
-filesystem.out
+* filesystem.pre
+* filesystem.post
+* filesystem.out
 
 ####Groups
-group.pre
-group.post
-group.out
+* group.pre
+* group.post
+* group.out
 
 ####Listening services
-services.pre
-services.post
-services.out
+* services.pre
+* services.post
+* services.out
 
 ####Services set to start
-startup.pre
-startup.post
-startup.out
+* startup.pre
+* startup.post
+* startup.out
 
 ####Users
-user.pre
-user.post
-user.out
+* user.pre
+* user.post
+* user.out
 
 ##References
 Presentation at BSidesLV 2013 on the Rosetta Stone Methodology - <a href="http://www.youtube.com/watch?v=cB8V-csHq8E" target="new">http://www.youtube.com/watch?v=cB8V-csHq8E</a>
