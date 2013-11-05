@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-include 'win32/registry'
+require 'win32/registry'
 #workingdir = '/home/ubuntu/rosetta'
 =begin workingdir = '/Users/ahay/Documents/Research/Development/rosetta'
 fs_ext = 'out'
