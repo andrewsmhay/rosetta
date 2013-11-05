@@ -175,7 +175,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 			elsif filetype =~ /\.json/
 				filetype_ary << filetype
 			end
-		File.open(output_filetype_ary+fs_ext[1], "w"){ |f| f.write(filetype_ary + "\n")}
+		File.open(output_filetype_ary+fs_ext[1], "w"){ |f| f.write(filetype_ary)}
 		end
 		puts "Post-analysis comparisons completed."
 	end
@@ -291,7 +291,7 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 			elsif filetype =~ /\.json/
 				filetype_ary << filetype
 			end
-		File.open(output_filetype_ary+fs_ext[1], "w"){ |f| f.write(filetype_ary  + "\n")}
+		File.open(output_filetype_ary+fs_ext[1], "w"){ |f| f.write(filetype_ary)}
 		end
 		puts "Post-analysis comparisons completed."
 	end
