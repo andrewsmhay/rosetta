@@ -19,7 +19,7 @@ puts ""
 puts "[+] Post-analysis comparisons completed."
 =end
 
-Win32::Registry::HKEY_LOCAL_MACHINE.open('SOFTWARE\\') do |reg|
+Win32::Registry::HKEY_LOCAL_MACHINE.open('SOFTWARE') do |reg|
 	reg.each_value do |name, type, data| 
 		p name
 		p type
