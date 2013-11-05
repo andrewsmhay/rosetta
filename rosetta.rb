@@ -24,6 +24,8 @@ fs_apt_file = "apt-file list " + package_name + " | grep -e share -v | cut -d ' 
 fs_apt_file_txt_fin = "Finished footprinting " + package_name + ". Results stored in " +package_name+".package."
 rc_list_txt_fin = []
 output_file_rc = "startup."
+output_filetype_ary = "config_files."
+config_files_fin = []
 group_list_txt_fin = []
 output_file_group = "group."
 group_list_txt = "Finished footprinting groups. Results stored in " + output_file_group
@@ -44,6 +46,7 @@ output_file_chk_config = "chkconfig."
 chk_config_txt_fin = "Finished footprinting service startup state. Results stored in " + output_file_chk_config
 
 name_files = ['chkconfig','filesystem','group','services','startup','user']
+filetype_ary = []
 
 
 #####################
@@ -157,6 +160,23 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 			f2 = IO.readlines(workingdir + "/" + naming + ".post").map(&:chomp)
 		File.open(workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
 		end
+		
+		puts "Identifying probable configuration files..."
+
+		IO.readlines(workingdir + "/filesystem.out").map(&:chomp).each do |filetype|
+			if filetype =~ /\.conf/
+				filetype_ary << filetype
+			elsif filetype =~ /\.properties/
+				filetype_ary << filetype
+			elsif filetype =~ /\.config/
+				filetype_ary << filetype
+			elsif filetype =~ /\.xml/
+				filetype_ary << filetype
+			elsif filetype =~ /\.json/
+				filetype_ary << filetype
+			end
+		File.open(output_filetype_ary+fs_ext[1], "w"){ |f| f.write(config_files_fin)}
+		end
 		puts "Post-analysis comparisons completed."
 	end
 
@@ -255,6 +275,23 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 			f1 = IO.readlines(workingdir + "/" + naming + ".pre").map(&:chomp)
 			f2 = IO.readlines(workingdir + "/" + naming + ".post").map(&:chomp)
 		File.open(workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
+		end
+
+		puts "Identifying probable configuration files..."
+
+		IO.readlines(workingdir + "/filesystem.out").map(&:chomp).each do |filetype|
+			if filetype =~ /\.conf/
+				filetype_ary << filetype
+			elsif filetype =~ /\.properties/
+				filetype_ary << filetype
+			elsif filetype =~ /\.config/
+				filetype_ary << filetype
+			elsif filetype =~ /\.xml/
+				filetype_ary << filetype
+			elsif filetype =~ /\.json/
+				filetype_ary << filetype
+			end
+		File.open(output_filetype_ary+fs_ext[1], "w"){ |f| f.write(config_files_fin)}
 		end
 		puts "Post-analysis comparisons completed."
 	end
