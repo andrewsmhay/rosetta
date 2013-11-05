@@ -14,7 +14,7 @@ Rosetta was designed to automate the pre- and post-installation information gath
 ##Usage
 
 <pre>
-./rosetta.rb <i><package_name></i> <i><pre></i> | <i><post|final></i>
+./rosetta.rb <i>package_name</i> <i>pre</i> | <i>post | final</i>
 
 e.g.
 <b>./rosetta.rb tomcat7 pre</b>
@@ -69,6 +69,8 @@ Post-analysis comparisons completed.
 (Note: best to run all commands as root or via a user with 'sudo' rights)
 
 ##Generated Files
+The scripts generate pre, post, and out (final) files for each configuration item tracked.
+
 ####Services configured to start, by run level
 chkconfig.pre
 chkconfig.post
