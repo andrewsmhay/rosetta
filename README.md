@@ -3,13 +3,15 @@ How can you secure your server if you have no idea what files, registry keys, us
 
 Using a combination of malware analysis techniques, package management utilities, and some homegrown tools, anyone can understand exactly what an application is going to do to your server and how its installation impacts your attack surface area. With this knowledge in hand, an organization can translate the newly created application map to Chef, Puppet, and RightScale configuration scripts to better automate its server and application fleet deployments. The map can also be used to help tighten controls for more accurate and continuous operational and security monitoring of applications.
 
-Rosetta was designed to automate the pre- and post-installation information gathering process so that security analysts can better understand what files, directories, and metadata changes occur on a system before it goes into production.
+Rosetta was designed to automate the pre- and post-installation information gathering process so that security analysts can better understand what files, directories, and metadata changes occur on a system before it goes into production. Rosetta will work on Linux and Windows distributions, though Windows Registry profiling have not yet been included.
 
 ##Requirements
 * require 'rbconfig'
 * require './lib/determineos.rb'
 * require 'find'
 * require 'etc'
+
+You must also install Ruby 1.8+ and it is recommended that you install git for easy downloading of the repository.
 
 ##Usage
 
@@ -39,6 +41,11 @@ Finished footprinting users. Results stored in user.pre.
 Footprinting service startup state...
 Finished footprinting service startup state. Results stored in chkconfig.pre.
 
+</pre>
+
+You must then install the application or application stack. Upon completion, continue with the <i>pre</i> and <i>post</i> analysis.
+
+<pre>
 <b>./rosetta.rb post</b>
 
 This is a Debian / Ubuntu distro using the apt package manager.
@@ -106,6 +113,9 @@ The scripts generate pre, post, and out (final) files for each configuration ite
 
 ##References
 Presentation at BSidesLV 2013 on the Rosetta Stone Methodology - <a href="http://www.youtube.com/watch?v=cB8V-csHq8E" target="new">http://www.youtube.com/watch?v=cB8V-csHq8E</a>
+
+##To Do
+* Expand support to Windows 32-bit/64-bit registry keys
 
 ##Contact
 
