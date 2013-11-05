@@ -20,6 +20,6 @@ puts "[+] Post-analysis comparisons completed."
 =end
 
 Win32::Registry::HKEY_LOCAL_MACHINE.open('SOFTWARE') do |reg|
-	reg.each_value { |name, type, data| puts name, type, data }
-	reg.each_key { |key, wtime| puts key + "|" + wtime }                # Enumerate subkeys
+	#reg.each_value { |name, type, data| puts name, type, data }
+	reg.each_key { |key, wtime| puts key, wtime }                # Enumerate subkeys
 end
