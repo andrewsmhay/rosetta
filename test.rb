@@ -25,4 +25,4 @@ Win32::Registry::HKEY_CURRENT_USER.open('SOFTWARE') do |reg|
 		puts data
 	end
 	#reg.each_key { |key, wtime| ... }                # Enumerate subkeys
-#end
+end
