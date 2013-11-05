@@ -12,7 +12,7 @@ apt_file_inst = "/usr/bin/apt-get install apt-file -y > /dev/null && /usr/bin/ap
 inputter = []
 fs_ext = ['pre', 'post', 'out']
 opt_sel = ['pre', 'post', 'final']
-opt_sel_err = "[-] Usage: ./rosetta.rb <package_name <pre> | <post|final>"
+opt_sel_err = "[-] Usage: ./rosetta.rb <package_name> <pre> | <post|final>"
 fs_footprint_fin = "Finished footprinting root filesystem. Results stored in " + fs_find_file
 fs_apt_file_txt = "Footprinting package contents..."
 
@@ -33,6 +33,7 @@ output_file_user = "user."
 user_list_txt = "Finished footprinting users. Results stored in " + output_file_user
 user_list_txt_fp = "Footprinting users..."
 net_stat = "/bin/netstat -tulpn > "
+net_stat_win = "netstat > "
 net_stat_txt = "Footprinting services..."
 output_file_net_stat = "services."
 net_stat_txt_fin = "Finished footprinting network ports. Results stored in " + output_file_net_stat
@@ -49,7 +50,7 @@ name_files = ['chkconfig','filesystem','group','services','startup','user']
 # Debian and Ubuntu #
 #####################
 if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
-	puts "This is a Debian / Ubuntu distro using the apt package manager."
+	puts "This is a Debian / Ubuntu distribution using the apt package manager."
 	if ARGV[1] == opt_sel[0]
 		if File.exist?("/usr/bin/apt-file")
 		else
@@ -165,7 +166,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 ######################
 elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 	if ARGV[1] == opt_sel[0]
-		puts "This is a Red Hat / CentOS based distro using the yum package manager."
+		puts "This is a Red Hat / CentOS based distribution using the yum package manager."
 		# Filesystem footprinting
 		puts ""
 		puts fs_footprint
@@ -262,16 +263,90 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 #####################
 # Microsoft Windows #
 #####################
-#elsif os_decided == "windows"
-#	puts "This is a Windows based distro."
-#   Filesystem footprinting
-#	puts ""
-#	puts fs_footprint
-#	Find.find('/') do |path|
-# 			inputter << path + "\n"
-#		end
-#	File.open(fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
-#	puts fs_footprint_fin+fs_ext[0]+"."
+elsif os_decided == "windows"
+	if ARGV[1] == opt_sel[0]
+		puts "This is a Windows based distribution."
+		# Filesystem footprinting
+		puts ""
+		puts fs_footprint
+		Find.find('/') do |path|
+   			inputter << path + "\n"
+ 		end
+		File.open(fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
+		puts fs_footprint_fin+fs_ext[0]+"."
+		# Network services
+		puts ""
+		puts net_stat_txt
+		system(net_stat_win+output_file_net_stat+fs_ext[0])
+		puts net_stat_txt_fin+fs_ext[0]+"."
+		# Group information
+		puts ""
+		puts group_list_txt_fp
+		system(wmic GROUP > group.pre)
+		puts group_list_txt+fs_ext[0]+"."
+ 		# User information
+		puts ""
+		puts user_list_txt_fp
+		system(wmic USERACCOUNT LIST FULL > user.pre)
+		puts user_list_txt+fs_ext[0]+"."
+		# CHKCONFIG Information
+		puts ""
+		puts chk_config_txt
+		system(wmic SERVICE LIST FULL > services.pre)
+		puts chk_config_txt_fin+fs_ext[0]+"."
+		
+		# Windows Registry
+		Win32::Registry::HKEY_CURRENT_USER.open('SOFTWARE') do |reg|
+		reg.each_value do |name, type, data|        # Enumerate values
+	    reg.each_key { |key, wtime| ... }                # Enumerate subkeys
+
+
+	elsif ARGV[1] == opt_sel[1]
+		puts "Initalizing post-installation footprinting..."
+		# Filesystem footprinting
+		puts ""
+		puts fs_footprint
+		Find.find('/') do |path|
+   			inputter << path + "\n"
+   		end
+		File.open(fs_find_file+fs_ext[1], "w"){ |f| f.write(inputter)}
+		puts fs_footprint_fin+fs_ext[1]+"."
+		# Network services
+		puts ""
+		puts net_stat_txt
+		system(net_stat_win+output_file_net_stat+fs_ext[1])
+		puts net_stat_txt_fin+fs_ext[1]+"."
+		# Group information
+		puts ""
+		puts group_list_txt_fp
+		system(wmic GROUP > group.post)
+		puts group_list_txt+fs_ext[1]+"."
+		# User information
+		puts ""
+		puts user_list_txt_fp
+		system(wmic USERACCOUNT LIST FULL > user.pre)
+		puts user_list_txt+fs_ext[1]+"."
+		# CHKCONFIG Information
+		puts ""
+		puts chk_config_txt
+		system(chk_config+output_file_chk_config+fs_ext[1])
+		puts chk_config_txt_fin+fs_ext[1]+"."
+		
+		#Windows Registry
+
+
+
+
+	else ARGV[1] == opt_sel[2]
+		puts "Initalizing post-analysis comparisons..."
+		name_files.each do |naming|
+			f1 = IO.readlines(workingdir + "/" + naming + ".pre").map(&:chomp)
+			f2 = IO.readlines(workingdir + "/" + naming + ".post").map(&:chomp)
+		File.open(workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
+		end
+		puts "Post-analysis comparisons completed."
+	end
+
 #
 # Win32::Registry::HKEY_LOCAL_MACHINE.open('SOFTWARE\') do |reg|
 # reg.each_value { |name, type, data| ... }        # Enumerate values
