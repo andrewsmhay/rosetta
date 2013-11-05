@@ -39,10 +39,7 @@ Finished footprinting users. Results stored in user.pre.
 Footprinting service startup state...
 Finished footprinting service startup state. Results stored in chkconfig.pre.
 
-./rosetta.rb <i>post</i>
-
-e.g.
-<b>./rosetta.rb tomcat7 pre</b>
+<b>./rosetta.rb post</b>
 
 This is a Debian / Ubuntu distro using the apt package manager.
 
@@ -61,10 +58,49 @@ Finished footprinting users. Results stored in user.post.
 Footprinting service startup state...
 Finished footprinting service startup state. Results stored in chkconfig.post.
 
+<b>./rosetta.rb final</b>
+
+Initalizing post-analysis comparisons...
+Identifying probable configuration files...
+Post-analysis comparisons completed.
 
 </pre>
 
-(Note: best to run as root or via a user with 'sudo' rights)
+(Note: best to run all commands as root or via a user with 'sudo' rights)
+
+##Generated Files
+####Services configured to start, by run level
+chkconfig.pre
+chkconfig.post
+chkconfig.out
+
+####Probable configuration files
+config_files.post
+
+####File system
+filesystem.pre
+filesystem.post
+filesystem.out
+
+####Groups
+group.pre
+group.post
+group.out
+
+####Listening services
+services.pre
+services.post
+services.out
+
+####Services set to start
+startup.pre
+startup.post
+startup.out
+
+####Users
+user.pre
+user.post
+user.out
 
 ##References
 Presentation at BSidesLV 2013 on the Rosetta Stone Methodology - <a href="http://www.youtube.com/watch?v=cB8V-csHq8E" target="new">http://www.youtube.com/watch?v=cB8V-csHq8E</a>
