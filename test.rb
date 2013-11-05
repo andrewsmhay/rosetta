@@ -1,23 +1,18 @@
 #!/usr/bin/env ruby
-workingdir = '/home/ubuntu/rosetta'
+#workingdir = '/home/ubuntu/rosetta'
+workingdir = '/Users/ahay/Documents/Research/Development/rosetta'
 fs_ext = 'out'
 post_files = ['chkconfig.post','filesystem.post','group.post','services.post','startup.post','user.post']
 pre_files = ['chkconfig.pre','filesystem.pre','group.pre','services.pre','startup.pre','user.pre'] 
 	
 puts "[+] Initalizing post-analysis comparisons..."
 
-post_files_chkconfig = IO.readlines(workingdir + "/chkconfig.post").map(&:chomp)
-pre_files_chkconfig = IO.readlines(workingdir + "/chkconfig.post").map(&:chomp)
+f1 = IO.readlines(workingdir + "/chkconfig.pre").map(&:chomp)
+f2 = IO.readlines(workingdir + "/chkconfig.post").map(&:chomp)
 
-puts ""
-puts "post_files_chkconfig"
-p post_files_chkconfig 
-puts ""
-puts "pre_files_chkconfig"
-p pre_files_chkconfig
-puts ""
+puts f2 - f1
 
-File.open(workingdir + "/chkconfig.out", "w"){ |f| f.write((post_files_chkconfig-pre_files_chkconfig).join("\n")) }
+File.open(workingdir + "/chkconfig.out", "w"){ |f| f.write((f2 - f1).join("\n")) }
 
 puts ""
 puts "[+] Post-analysis comparisons completed."

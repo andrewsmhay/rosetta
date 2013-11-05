@@ -42,6 +42,9 @@ chk_config_txt = "Footprinting service startup state..."
 output_file_chk_config = "chkconfig."
 chk_config_txt_fin = "Finished footprinting service startup state. Results stored in " + output_file_chk_config
 
+name_files = ['chkconfig','filesystem','group','services','startup','user']
+
+
 #####################
 # Debian and Ubuntu #
 #####################
@@ -146,15 +149,17 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		end
 		File.open(output_file_rc+fs_ext[1], "w"){ |f| f.write(rc_list_txt_fin)}
 
-	elsif ARGV[1] == opt_sel[2]
+	else ARGV[1] == opt_sel[2]
 		puts "Initalizing post-analysis comparisons..."
-		Dir.glob("/*.pre") do |rb_file|
-			f1 = IO.readlines(rb_file).map(&:chomp)
-			f2 = IO.readlines(rb_file.gsub(/pre/, 'post')).map(&:chomp)
-			File.open(rb_file.gsub(/pre/, fs_ext[2]),"w"){ |f| f.write((f1-f2).join("\n")) }
+		name_files.each do |naming|
+			f1 = IO.readlines(workingdir + "/" + naming + ".pre").map(&:chomp)
+			f2 = IO.readlines(workingdir + "/" + naming + ".post").map(&:chomp)
+		File.open(workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
 		end
 		puts "Post-analysis comparisons completed."
 	end
+
+
 ######################
 # Red Hat and CentOS #
 ######################
@@ -243,15 +248,17 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 		end
 		File.open(output_file_rc+fs_ext[1], "w"){ |f| f.write(rc_list_txt_fin)}
 
-	elsif ARGV[1] == opt_sel[2]
+	else ARGV[1] == opt_sel[2]
 		puts "Initalizing post-analysis comparisons..."
-		Dir.glob("/*.pre") do |rb_file|
-			f1 = IO.readlines(rb_file).map(&:chomp)
-			f2 = IO.readlines(rb_file.gsub(/pre/, 'post')).map(&:chomp)
-			File.open(rb_file.gsub(/pre/, fs_ext[2]),"w"){ |f| f.write((f1-f2).join("\n")) }
+		name_files.each do |naming|
+			f1 = IO.readlines(workingdir + "/" + naming + ".pre").map(&:chomp)
+			f2 = IO.readlines(workingdir + "/" + naming + ".post").map(&:chomp)
+		File.open(workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
 		end
 		puts "Post-analysis comparisons completed."
 	end
+	
+
 #####################
 # Microsoft Windows #
 #####################
