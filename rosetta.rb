@@ -294,12 +294,12 @@ elsif os_decided == "windows"
 		puts chk_config_txt
 		system(wmic SERVICE LIST FULL > services.pre)
 		puts chk_config_txt_fin+fs_ext[0]+"."
-		
+=begin		
 		# Windows Registry
 		Win32::Registry::HKEY_CURRENT_USER.open('SOFTWARE') do |reg|
 		reg.each_value do |name, type, data|        # Enumerate values
 	    reg.each_key { |key, wtime| ... }                # Enumerate subkeys
-
+=end
 
 	elsif ARGV[1] == opt_sel[1]
 		puts "Initalizing post-installation footprinting..."
