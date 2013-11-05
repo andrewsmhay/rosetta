@@ -165,17 +165,17 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 
 		IO.readlines(workingdir + "/filesystem.out").map(&:chomp).each do |filetype|
 			if filetype =~ /\.conf/
-				filetype_ary << filetype + "\n"
+				filetype_ary << filetype
 			elsif filetype =~ /\.properties/
-				filetype_ary << filetype + "\n"
+				filetype_ary << filetype
 			elsif filetype =~ /\.config/
-				filetype_ary << filetype + "\n"
+				filetype_ary << filetype
 			elsif filetype =~ /\.xml/
-				filetype_ary << filetype + "\n"
+				filetype_ary << filetype
 			elsif filetype =~ /\.json/
-				filetype_ary << filetype + "\n"
+				filetype_ary << filetype
 			end
-		File.open(output_filetype_ary+fs_ext[1], "w"){ |f| f.write(filetype_ary)}
+		File.open(output_filetype_ary+fs_ext[1], "w"){ |f| f.write(filetype_ary + "\n")}
 		end
 		puts "Post-analysis comparisons completed."
 	end
@@ -281,17 +281,17 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 
 		IO.readlines(workingdir + "/filesystem.out").map(&:chomp).each do |filetype|
 			if filetype =~ /\.conf/
-				filetype_ary << filetype + "\n"
+				filetype_ary << filetype
 			elsif filetype =~ /\.properties/
-				filetype_ary << filetype + "\n"
+				filetype_ary << filetype
 			elsif filetype =~ /\.config/
-				filetype_ary << filetype + "\n"
+				filetype_ary << filetype
 			elsif filetype =~ /\.xml/
-				filetype_ary << filetype + "\n"
+				filetype_ary << filetype
 			elsif filetype =~ /\.json/
-				filetype_ary << filetype + "\n"
+				filetype_ary << filetype
 			end
-		File.open(output_filetype_ary+fs_ext[1], "w"){ |f| f.write(filetype_ary)}
+		File.open(output_filetype_ary+fs_ext[1], "w"){ |f| f.write(filetype_ary  + "\n")}
 		end
 		puts "Post-analysis comparisons completed."
 	end
