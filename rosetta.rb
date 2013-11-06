@@ -57,14 +57,12 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 
 	if ARGV[1] == opt_sel[0]
 
-		if File.exist?("/usr/bin/apt-file")
-		else
+		unless !File.exist?("/usr/bin/apt-file")
 			puts "The 'apt-file' program is not installed...installing now."
 			system(apt_file_inst)
 		end
 
-		if File.exist?("/sbin/chkconfig")
-		else
+		unless File.exist?("/sbin/chkconfig")
 			puts "The 'chkconfig' program is not installed...installing now."
 			system(apt_file_inst_chk)
 		end
@@ -75,7 +73,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		Find.find('/') do |path|
  			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home")))
    				inputter << path + "\n"
-   			end
+   		end
  		end
 		File.open(fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
 		puts fs_footprint_fin+fs_ext[0]+"."
