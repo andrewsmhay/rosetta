@@ -54,17 +54,21 @@ filetype_ary = []
 #####################
 if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 	puts "This is a Debian / Ubuntu distribution using the apt package manager."
+
 	if ARGV[1] == opt_sel[0]
+
 		if File.exist?("/usr/bin/apt-file")
 		else
 			puts "The 'apt-file' program is not installed...installing now."
 			system(apt_file_inst)
 		end
+
 		if File.exist?("/sbin/chkconfig")
 		else
 			puts "The 'chkconfig' program is not installed...installing now."
 			system(apt_file_inst_chk)
 		end
+
 		# Filesystem footprinting
 		puts ""
 		puts fs_footprint
@@ -75,33 +79,39 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
  		end
 		File.open(fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
 		puts fs_footprint_fin+fs_ext[0]+"."
+
 		# Package contents
 		puts ""
 		puts fs_apt_file_txt
 		system(fs_apt_file)
 		puts fs_apt_file_txt_fin
+
 		# Network services
 		puts ""
 		puts net_stat_txt
 		system(net_stat+output_file_net_stat+fs_ext[0])
 		puts net_stat_txt_fin+fs_ext[0]+"."
+
 		# Group information
 		puts ""
 		puts group_list_txt_fp
 		Etc.group {|g| group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
 		File.open(output_file_group+fs_ext[0], "w"){ |f| f.write(group_list_txt_fin)}
 		puts group_list_txt+fs_ext[0]+"."
+
 		# User information
 		puts ""
 		puts user_list_txt_fp
 		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
 		File.open(output_file_user+fs_ext[0], "w"){ |f| f.write(user_list_txt_fin)}
 		puts user_list_txt+fs_ext[0]+"."
+
 		# CHKCONFIG Information
 		puts ""
 		puts chk_config_txt
 		system(chk_config+output_file_chk_config+fs_ext[0])
 		puts chk_config_txt_fin+fs_ext[0]+"."
+
 		# Startup binaries
 		puts ""
 		Dir.glob("/etc/rc?.d").each do |rc_list|
@@ -109,7 +119,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 			end
 		end
 		File.open(output_file_rc+fs_ext[0], "w"){ |f| f.write(rc_list_txt_fin)}
-	
+
 	elsif ARGV[1] == opt_sel[1]
 		puts "Initalizing post-installation footprinting..."
 		# Filesystem footprinting
@@ -122,29 +132,34 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
  		end
 		File.open(fs_find_file+fs_ext[1], "w"){ |f| f.write(inputter)}
 		puts fs_footprint_fin+fs_ext[1]+"."
+
 		# Package contents not required for post-install footprinting
 		# Network services
 		puts ""
 		puts net_stat_txt
 		system(net_stat+output_file_net_stat+fs_ext[1])
 		puts net_stat_txt_fin+fs_ext[1]+"."
+
 		# Group information
 		puts ""
 		puts group_list_txt_fp
 		Etc.group {|g| group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
 		File.open(output_file_group+fs_ext[1], "w"){ |f| f.write(group_list_txt_fin)}
 		puts group_list_txt+fs_ext[1]+"."
+
 		# User information
 		puts ""
 		puts user_list_txt_fp
 		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
 		File.open(output_file_user+fs_ext[1], "w"){ |f| f.write(user_list_txt_fin)}
 		puts user_list_txt+fs_ext[1]+"."
+
 		# CHKCONFIG Information
 		puts ""
 		puts chk_config_txt
 		system(chk_config+output_file_chk_config+fs_ext[1])
 		puts chk_config_txt_fin+fs_ext[1]+"."
+
 		# Startup binaries
 		puts ""
 		Dir.glob("/etc/rc?.d").each do |rc_list|
@@ -331,6 +346,7 @@ elsif os_decided == "windows"
 		puts chk_config_txt
 		system(wmic SERVICE LIST FULL > services.pre)
 		puts chk_config_txt_fin+fs_ext[0]+"."
+
 =begin		
 		# Windows Registry
 		Win32::Registry::HKEY_CURRENT_USER.open('SOFTWARE') do |reg|
