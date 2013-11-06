@@ -2,7 +2,7 @@ require 'rbconfig'
 
 # Detects the operating system that the script is being run on
 class Determineos
-  def os 
+  def os
     @os ||= (
       host_os = RbConfig::CONFIG['host_os']
       case host_os
@@ -13,6 +13,6 @@ class Determineos
       else
         raise Error::WebDriverError, "unknown os: #{host_os.inspect}"
      end
-  )  
+  )
   end
 end
