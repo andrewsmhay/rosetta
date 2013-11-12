@@ -417,12 +417,3 @@ elsif os_decided == "windows"
 else
   puts Messages.opt_sel_err
 end
-
-# $ rspec rosetta.rb
-describe FootPrint do
-  context "initialization" do
-    it "instantiates correctly" do
-      expect(FootPrint.new).to_not be_nil
-    end
-  end
-end
