@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-$LOAD_PATH << File.expand_path('~/Documents/Research/Development/rosetta/lib') ##### REMOVE BEFORE PUSHING TO GIT
+$LOAD_PATH << File.expand_path('~/rosetta/lib') ##### REMOVE BEFORE PUSHING TO GIT
 #gems
 require 'rspec'
 require 'find'
