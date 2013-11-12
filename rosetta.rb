@@ -1,124 +1,117 @@
 #!/usr/bin/env ruby
-
+$LOAD_PATH << File.expand_path('~/Documents/Research/Development/rosetta/lib') ##### REMOVE BEFORE PUSHING TO GIT
+#gems
 require 'rspec'
-
-require './lib/determineos.rb'
 require 'find'
 require 'etc'
+# libs
+require 'determineos'
+require 'messages'
 
 os_select = Determineos.new
 os_decided = os_select.os.to_s
 workingdir = '.'
-fs_footprint = "Footprinting root filesystem..."
-fs_find_file = "filesystem."
+#fs_footprint = "Footprinting root filesystem..."
+#fs_find_file = "filesystem."
 apt_file_inst = "/usr/bin/apt-get install apt-file -y > /dev/null && /usr/bin/apt-file update > /dev/null"
 inputter = []
 fs_ext = ['pre', 'post', 'out']
 opt_sel = ['pre', 'post', 'final']
-opt_sel_err = "[-] Usage: ./rosetta.rb <package_name> <pre> | <post|final>"
-fs_footprint_fin = "Finished footprinting root filesystem. Results stored in " + fs_find_file
-fs_apt_file_txt = "Footprinting package contents..."
+#opt_sel_err = "[-] Usage: ./rosetta.rb <package_name> <pre> | <post|final>"
+#fs_footprint_fin = "Finished footprinting root filesystem. Results stored in " + fs_find_file
+#fs_apt_file_txt = "Footprinting package contents..."
 
 commands = []
 ARGV.each {|arg| commands << arg}
 
 package_name = ARGV[0]
-fs_apt_file = "apt-file list " + package_name + " | grep -e share -v | cut -d ' ' -f2 > " + package_name+".package"
-fs_apt_file_txt_fin = "Finished footprinting " + package_name + ". Results stored in " +package_name+".package."
+#fs_apt_file = "apt-file list " + package_name + " | grep -e share -v | cut -d ' ' -f2 > " + package_name+".package"
+#fs_apt_file_txt_fin = "Finished footprinting " + package_name + ". Results stored in " +package_name+".package."
 rc_list_txt_fin = []
-output_file_rc = "startup."
-output_filetype_ary = "config_files."
+#output_file_rc = "startup."
+#output_filetype_ary = "config_files."
 config_files_fin = []
 group_list_txt_fin = []
-output_file_group = "group."
-group_list_txt = "Finished footprinting groups. Results stored in " + output_file_group
-group_list_txt_fp = "Footprinting groups..."
+#output_file_group = "group."
+#group_list_txt = "Finished footprinting groups. Results stored in " + output_file_group
+#group_list_txt_fp = "Footprinting groups..."
 user_list_txt_fin = []
-output_file_user = "user."
-user_list_txt = "Finished footprinting users. Results stored in " + output_file_user
-user_list_txt_fp = "Footprinting users..."
+#output_file_user = "user."
+#user_list_txt = "Finished footprinting users. Results stored in " + output_file_user
+#user_list_txt_fp = "Footprinting users..."
 net_stat = "/bin/netstat -tulpn > "
 net_stat_win = "netstat > "
-net_stat_txt = "Footprinting services..."
-output_file_net_stat = "services."
-net_stat_txt_fin = "Finished footprinting network ports. Results stored in " + output_file_net_stat
+#net_stat_txt = "Footprinting services..."
+#output_file_net_stat = "services."
+#net_stat_txt_fin = "Finished footprinting network ports. Results stored in " + output_file_net_stat
 apt_file_inst_chk = "/usr/bin/apt-get install chkconfig -y > /dev/null"
 chk_config = "chkconfig --list > "
-chk_config_txt = "Footprinting service startup state..."
-output_file_chk_config = "chkconfig."
-chk_config_txt_fin = "Finished footprinting service startup state. Results stored in " + output_file_chk_config
+#chk_config_txt = "Footprinting service startup state..."
+#output_file_chk_config = "chkconfig."
+#chk_config_txt_fin = "Finished footprinting service startup state. Results stored in " + output_file_chk_config
 
 name_files = ['chkconfig','filesystem','group','services','startup','user']
 filetype_ary = []
-
-
-class FootPrint
-  def self.banner
-    "Footprinting root filesystem..."
-  end
-end
-
 
 #####################
 # Debian and Ubuntu #
 #####################
 if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
-	puts "This is a Debian / Ubuntu distribution using the apt package manager."
+	puts Messages.deb
 
 	if ARGV[1] == opt_sel[0]
 
 		unless !File.exist?("/usr/bin/apt-file")
-			puts "The 'apt-file' program is not installed...installing now."
+			puts Messages.apt_present
 			system(apt_file_inst)
 		end
-
 		unless File.exist?("/sbin/chkconfig")
-			puts "The 'chkconfig' program is not installed...installing now."
+			puts Messages.chkconfig_present
 			system(apt_file_inst_chk)
 		end
 
 		# Filesystem footprinting
 		puts ""
-		puts FootPrint.banner
+		puts Messages.fs_footprint
 		Find.find('/') do |path|
  			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home")))
    				inputter << path + "\n"
    		end
  		end
-		File.open(fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
-		puts fs_footprint_fin+fs_ext[0]+"."
+		File.open(Messages.fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
+		puts Messages.fs_footprint_fin+fs_ext[0]+"."
 
 		# Package contents
 		puts ""
-		puts fs_apt_file_txt
+		puts Messages.fs_apt_file_txt
 		system(fs_apt_file)
-		puts fs_apt_file_txt_fin
+		puts Messages.fs_apt_file_txt_fin
 
 		# Network services
 		puts ""
-		puts net_stat_txt
-		system(net_stat+output_file_net_stat+fs_ext[0])
-		puts net_stat_txt_fin+fs_ext[0]+"."
+		puts Messages.net_stat_txt
+		system(net_stat+Messages.output_file_net_stat+fs_ext[0])
+		puts Messages.net_stat_txt_fin+fs_ext[0]+"."
 
 		# Group information
 		puts ""
-		puts group_list_txt_fp
+		puts Messages.group_list_txt_fp
 		Etc.group {|g| group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
-		File.open(output_file_group+fs_ext[0], "w"){ |f| f.write(group_list_txt_fin)}
-		puts group_list_txt+fs_ext[0]+"."
+		File.open(Messages.output_file_group+fs_ext[0], "w"){ |f| f.write(group_list_txt_fin)}
+		puts Messages.group_list_txt+fs_ext[0]+"."
 
 		# User information
 		puts ""
-		puts user_list_txt_fp
+		puts Messages.user_list_txt_fp
 		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
-		File.open(output_file_user+fs_ext[0], "w"){ |f| f.write(user_list_txt_fin)}
-		puts user_list_txt+fs_ext[0]+"."
+		File.open(Messages.output_file_user+fs_ext[0], "w"){ |f| f.write(user_list_txt_fin)}
+		puts Messages.user_list_txt+fs_ext[0]+"."
 
 		# CHKCONFIG Information
 		puts ""
-		puts chk_config_txt
-		system(chk_config+output_file_chk_config+fs_ext[0])
-		puts chk_config_txt_fin+fs_ext[0]+"."
+		puts Messages.chk_config_txt
+		system(chk_config+Messages.output_file_chk_config+fs_ext[0])
+		puts Messages.chk_config_txt_fin+fs_ext[0]+"."
 
 		# Startup binaries
 		puts ""
@@ -127,47 +120,47 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
         rc_list_txt_fin << pathrc + "\n"
 			end
 		end
-		File.open(output_file_rc+fs_ext[0], "w"){ |f| f.write(rc_list_txt_fin)}
+		File.open(Messages.output_file_rc+fs_ext[0], "w"){ |f| f.write(rc_list_txt_fin)}
 
 	elsif ARGV[1] == opt_sel[1]
-		puts "Initalizing post-installation footprinting..."
+		puts Messages.post_fs_footprint
 		# Filesystem footprinting
 		puts ""
-		puts fs_footprint
+		puts Messages.fs_footprint
 		Find.find('/') do |path|
  			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home")))
    				inputter << path + "\n"
       end
  		end
 		File.open(fs_find_file+fs_ext[1], "w"){ |f| f.write(inputter)}
-		puts fs_footprint_fin+fs_ext[1]+"."
+		puts Messages.fs_footprint_fin+fs_ext[1]+"."
 
 		# Package contents not required for post-install footprinting
 		# Network services
 		puts ""
-		puts net_stat_txt
-		system(net_stat+output_file_net_stat+fs_ext[1])
-		puts net_stat_txt_fin+fs_ext[1]+"."
+		puts Messages.net_stat_txt
+		system(net_stat+Messages.output_file_net_stat+fs_ext[1])
+		puts Messages.net_stat_txt_fin+fs_ext[1]+"."
 
 		# Group information
 		puts ""
-		puts group_list_txt_fp
+		puts Messages.group_list_txt_fp
 		Etc.group {|g| group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
-		File.open(output_file_group+fs_ext[1], "w"){ |f| f.write(group_list_txt_fin)}
-		puts group_list_txt+fs_ext[1]+"."
+		File.open(Messages.output_file_group+fs_ext[1], "w"){ |f| f.write(group_list_txt_fin)}
+		puts Messages.group_list_txt+fs_ext[1]+"."
 
 		# User information
 		puts ""
-		puts user_list_txt_fp
+		puts Messages.user_list_txt_fp
 		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
-		File.open(output_file_user+fs_ext[1], "w"){ |f| f.write(user_list_txt_fin)}
-		puts user_list_txt+fs_ext[1]+"."
+		File.open(Messages.output_file_user+fs_ext[1], "w"){ |f| f.write(user_list_txt_fin)}
+		puts Messages.user_list_txt+fs_ext[1]+"."
 
 		# CHKCONFIG Information
 		puts ""
-		puts chk_config_txt
-		system(chk_config+output_file_chk_config+fs_ext[1])
-		puts chk_config_txt_fin+fs_ext[1]+"."
+		puts Messages.chk_config_txt
+		system(chk_config+Messages.output_file_chk_config+fs_ext[1])
+		puts Messages.chk_config_txt_fin+fs_ext[1]+"."
 
 		# Startup binaries
 		puts ""
@@ -175,17 +168,17 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 			Find.find(rc_list) do |pathrc| rc_list_txt_fin << pathrc + "\n"
 			end
 		end
-		File.open(output_file_rc+fs_ext[1], "w"){ |f| f.write(rc_list_txt_fin)}
+		File.open(Messages.output_file_rc+fs_ext[1], "w"){ |f| f.write(rc_list_txt_fin)}
 
 	else ARGV[1] == opt_sel[2]
-		puts "Initalizing post-analysis comparisons..."
+		puts Messages.post_a_compare
 		name_files.each do |naming|
 			f1 = IO.readlines(workingdir + "/" + naming + ".pre").map(&:chomp)
 			f2 = IO.readlines(workingdir + "/" + naming + ".post").map(&:chomp)
 		File.open(workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
 		end
 		
-		puts "Identifying probable configuration files..."
+		puts Messages.prob_config
 
 		IO.readlines(workingdir + "/filesystem.out").map(&:chomp).each do |filetype|
 			if filetype =~ /\.conf/
@@ -199,9 +192,9 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 			elsif filetype =~ /\.json/
 				filetype_ary << filetype
 			end
-		File.open(output_filetype_ary+fs_ext[1], "w"){ |f| f.write((filetype_ary).join("\n"))}
+		File.open(Messages.output_filetype_ary+fs_ext[1], "w"){ |f| f.write((filetype_ary).join("\n"))}
 		end
-		puts "Post-analysis comparisons completed."
+		puts Messages.post_analysis
 	end
 
 
@@ -210,98 +203,98 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 ######################
 elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 	if ARGV[1] == opt_sel[0]
-		puts "This is a Red Hat / CentOS based distribution using the yum package manager."
+		puts Messages.rh
 		# Filesystem footprinting
 		puts ""
-		puts fs_footprint
+		puts Messages.fs_footprint
 		Find.find('/') do |path|
  			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home")))
    				inputter << path + "\n"
    			end
  		end
-		File.open(fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
-		puts fs_footprint_fin+fs_ext[0]+"."
+		File.open(Messages.fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
+		puts Messages.fs_footprint_fin+fs_ext[0]+"."
 		# Network services
 		puts ""
-		puts net_stat_txt
-		system(net_stat+output_file_net_stat+fs_ext[0])
-		puts net_stat_txt_fin+fs_ext[0]+"."
+		puts Messages.net_stat_txt
+		system(net_stat+Messages.output_file_net_stat+fs_ext[0])
+		puts Messages.net_stat_txt_fin+fs_ext[0]+"."
 		# Group information
 		puts ""
-		puts group_list_txt_fp
+		puts Messages.group_list_txt_fp
 		Etc.group {|g| group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
-		File.open(output_file_group+fs_ext[0], "w"){ |f| f.write(group_list_txt_fin)}
-		puts group_list_txt+fs_ext[0]+"."
+		File.open(Messages.output_file_group+fs_ext[0], "w"){ |f| f.write(group_list_txt_fin)}
+		puts Messages.group_list_txt+fs_ext[0]+"."
 		# User information
 		puts ""
-		puts user_list_txt_fp
+		puts Messages.user_list_txt_fp
 		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
-		File.open(output_file_user+fs_ext[0], "w"){ |f| f.write(user_list_txt_fin)}
-		puts user_list_txt+fs_ext[0]+"."
+		File.open(Messages.output_file_user+fs_ext[0], "w"){ |f| f.write(user_list_txt_fin)}
+		puts Messages.user_list_txt+fs_ext[0]+"."
 		# CHKCONFIG Information
 		puts ""
-		puts chk_config_txt
-		system(chk_config+output_file_chk_config+fs_ext[0])
-		puts chk_config_txt_fin+fs_ext[0]+"."
+		puts Messages.chk_config_txt
+		system(chk_config+Messages.output_file_chk_config+fs_ext[0])
+		puts Messages.chk_config_txt_fin+fs_ext[0]+"."
 		# Startup binaries
 		puts ""
 		Dir.glob("/etc/rc?.d").each do |rc_list|
 			Find.find(rc_list) do |pathrc| rc_list_txt_fin << pathrc + "\n"
 			end
 		end
-		File.open(output_file_rc+fs_ext[0], "w"){ |f| f.write(rc_list_txt_fin)}
+		File.open(Messages.output_file_rc+fs_ext[0], "w"){ |f| f.write(rc_list_txt_fin)}
 	
 	elsif ARGV[1] == opt_sel[1]
-		puts "Initalizing post-installation footprinting..."
+		puts Messages.post_fs_footprint
 		# Filesystem footprinting
 		puts ""
-		puts fs_footprint
+		puts Messages.fs_footprint
 		Find.find('/') do |path|
  			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home")))
    				inputter << path + "\n"
    			end
  		end
-		File.open(fs_find_file+fs_ext[1], "w"){ |f| f.write(inputter)}
-		puts fs_footprint_fin+fs_ext[1]+"."
+		File.open(Messages.fs_find_file+fs_ext[1], "w"){ |f| f.write(inputter)}
+		puts Messages.fs_footprint_fin+fs_ext[1]+"."
 		# Network services
 		puts ""
-		puts net_stat_txt
-		system(net_stat+output_file_net_stat+fs_ext[1])
-		puts net_stat_txt_fin+fs_ext[1]+"."
+		puts Messages.net_stat_txt
+		system(net_stat+Messages.output_file_net_stat+fs_ext[1])
+		puts Messages.net_stat_txt_fin+fs_ext[1]+"."
 		# Group information
 		puts ""
-		puts group_list_txt_fp
+		puts Messages.group_list_txt_fp
 		Etc.group {|g| group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
-		File.open(output_file_group+fs_ext[1], "w"){ |f| f.write(group_list_txt_fin)}
-		puts group_list_txt+fs_ext[1]+"."
+		File.open(Messages.output_file_group+fs_ext[1], "w"){ |f| f.write(group_list_txt_fin)}
+		puts Messages.group_list_txt+fs_ext[1]+"."
 		# User information
 		puts ""
-		puts user_list_txt_fp
+		puts Messages.user_list_txt_fp
 		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
-		File.open(output_file_user+fs_ext[1], "w"){ |f| f.write(user_list_txt_fin)}
-		puts user_list_txt+fs_ext[1]+"."
+		File.open(Messages.output_file_user+fs_ext[1], "w"){ |f| f.write(user_list_txt_fin)}
+		puts Messages.user_list_txt+fs_ext[1]+"."
 		# CHKCONFIG Information
 		puts ""
-		puts chk_config_txt
-		system(chk_config+output_file_chk_config+fs_ext[1])
-		puts chk_config_txt_fin+fs_ext[1]+"."
+		puts Messages.chk_config_txt
+		system(chk_config+Messages.output_file_chk_config+fs_ext[1])
+		puts Messages.chk_config_txt_fin+fs_ext[1]+"."
 		# Startup binaries
 		puts ""
 		Dir.glob("/etc/rc?.d").each do |rc_list|
 			Find.find(rc_list) do |pathrc| rc_list_txt_fin << pathrc + "\n"
 			end
 		end
-		File.open(output_file_rc+fs_ext[1], "w"){ |f| f.write(rc_list_txt_fin)}
+		File.open(Messages.output_file_rc+fs_ext[1], "w"){ |f| f.write(rc_list_txt_fin)}
 
 	else ARGV[1] == opt_sel[2]
-		puts "Initalizing post-analysis comparisons..."
+		puts Messages.post_a_compare
 		name_files.each do |naming|
 			f1 = IO.readlines(workingdir + "/" + naming + ".pre").map(&:chomp)
 			f2 = IO.readlines(workingdir + "/" + naming + ".post").map(&:chomp)
 		File.open(workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
 		end
 
-		puts "Identifying probable configuration files..."
+		puts Messages.prob_config
 
 		IO.readlines(workingdir + "/filesystem.out").map(&:chomp).each do |filetype|
 			if filetype =~ /\.conf/
@@ -315,9 +308,9 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 			elsif filetype =~ /\.json/
 				filetype_ary << filetype
 			end
-		File.open(output_filetype_ary+fs_ext[1], "w"){ |f| f.write((filetype_ary).join("\n"))}
+		File.open(Messages.output_filetype_ary+fs_ext[1], "w"){ |f| f.write((filetype_ary).join("\n"))}
 		end
-		puts "Post-analysis comparisons completed."
+		puts Messages.post_analysis
 	end
 	
 
@@ -326,40 +319,40 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 #####################
 elsif os_decided == "windows"
 	if ARGV[1] == opt_sel[0]
-		puts "This is a Windows based distribution."
+		puts Messages.ms
 
 		# Filesystem footprinting
 		puts ""
-		puts fs_footprint
+		puts Messages.fs_footprint
 		Find.find('/') do |path|
    			inputter << path + "\n"
  		end
-		File.open(fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
-		puts fs_footprint_fin+fs_ext[0]+"."
+		File.open(Messages.fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
+		puts Messages.fs_footprint_fin+fs_ext[0]+"."
 
 		# Network services
 		puts ""
-		puts net_stat_txt
-		system(net_stat_win+output_file_net_stat+fs_ext[0])
+		puts Messages.net_stat_txt
+		system(net_stat_win+Messages.output_file_net_stat+fs_ext[0])
 		puts net_stat_txt_fin+fs_ext[0]+"."
 
 		# Group information
 		puts ""
-		puts group_list_txt_fp
+		puts Messages.group_list_txt_fp
 		system(wmic GROUP > group.pre)
-		puts group_list_txt+fs_ext[0]+"."
+		puts Messages.group_list_txt+fs_ext[0]+"."
 
  		# User information
 		puts ""
-		puts user_list_txt_fp
+		puts Messages.user_list_txt_fp
 		system(wmic USERACCOUNT LIST FULL > user.pre)
-		puts user_list_txt+fs_ext[0]+"."
+		puts Messages.user_list_txt+fs_ext[0]+"."
 
 		# CHKCONFIG Information
 		puts ""
-		puts chk_config_txt
+		puts Messages.chk_config_txt
 		system(wmic SERVICE LIST FULL > services.pre)
-		puts chk_config_txt_fin+fs_ext[0]+"."
+		puts Messages.chk_config_txt_fin+fs_ext[0]+"."
 
 =begin		
 		# Windows Registry
@@ -369,51 +362,51 @@ elsif os_decided == "windows"
 =end
 
 	elsif ARGV[1] == opt_sel[1]
-		puts "Initalizing post-installation footprinting..."
+		puts Messages.post_fs_footprint
 
 		# Filesystem footprinting
 		puts ""
-		puts fs_footprint
+		puts Messages.fs_footprint
 		Find.find('/') do |path|
    			inputter << path + "\n"
    		end
-		File.open(fs_find_file+fs_ext[1], "w"){ |f| f.write(inputter)}
-		puts fs_footprint_fin+fs_ext[1]+"."
+		File.open(Messages.fs_find_file+fs_ext[1], "w"){ |f| f.write(inputter)}
+		puts Messages.fs_footprint_fin+fs_ext[1]+"."
 
 		# Network services
 		puts ""
-		puts net_stat_txt
-		system(net_stat_win+output_file_net_stat+fs_ext[1])
-		puts net_stat_txt_fin+fs_ext[1]+"."
+		puts Messages.net_stat_txt
+		system(net_stat_win+Messages.output_file_net_stat+fs_ext[1])
+		puts Messages.net_stat_txt_fin+fs_ext[1]+"."
 
 		# Group information
 		puts ""
-		puts group_list_txt_fp
+		puts Messages.group_list_txt_fp
 		system(wmic GROUP > group.post)
-		puts group_list_txt+fs_ext[1]+"."
+		puts Messages.group_list_txt+fs_ext[1]+"."
 
 		# User information
 		puts ""
-		puts user_list_txt_fp
+		puts Messages.user_list_txt_fp
 		system(wmic USERACCOUNT LIST FULL > user.pre)
-		puts user_list_txt+fs_ext[1]+"."
+		puts Messages.user_list_txt+fs_ext[1]+"."
 
 		# CHKCONFIG Information
 		puts ""
-		puts chk_config_txt
-		system(chk_config+output_file_chk_config+fs_ext[1])
-		puts chk_config_txt_fin+fs_ext[1]+"."
+		puts Messages.chk_config_txt
+		system(chk_config+Messages.output_file_chk_config+fs_ext[1])
+		puts Messages.chk_config_txt_fin+fs_ext[1]+"."
 		
 		#Windows Registry
 
 	else ARGV[1] == opt_sel[2]
-		puts "Initalizing post-analysis comparisons..."
+		puts Messages.post_a_compare
 		name_files.each do |naming|
 			f1 = IO.readlines(workingdir + "/" + naming + ".pre").map(&:chomp)
 			f2 = IO.readlines(workingdir + "/" + naming + ".post").map(&:chomp)
 		File.open(workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
 		end
-		puts "Post-analysis comparisons completed."
+		puts Messages.post_analysis
 	end
 
 #
@@ -422,7 +415,7 @@ elsif os_decided == "windows"
 # reg.each_key { |key, wtime| ... }                # Enumerate subkeys
 # end
 else
-  puts opt_sel_err
+  puts Messages.opt_sel_err
 end
 
 # $ rspec rosetta.rb
