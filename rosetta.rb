@@ -76,7 +76,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		Find.find('/') do |path|
  			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home")))
    				inputter << path + "\n"
-   		end
+   			end
  		end
 		File.open(Messages.fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
 		puts Messages.fs_footprint_fin+fs_ext[0]+"."
@@ -130,7 +130,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		Find.find('/') do |path|
  			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home")))
    				inputter << path + "\n"
-      end
+      		end
  		end
 		File.open(fs_find_file+fs_ext[1], "w"){ |f| f.write(inputter)}
 		puts Messages.fs_footprint_fin+fs_ext[1]+"."
@@ -238,10 +238,7 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 		puts Messages.chk_config_txt_fin+fs_ext[0]+"."
 		# Startup binaries
 		puts ""
-		Dir.glob("/etc/rc?.d").each do |rc_list|
-			Find.find(rc_list) do |pathrc| rc_list_txt_fin << pathrc + "\n"
-			end
-		end
+		Dir.glob("/etc/rc?.d").each { |rc_list| Find.find(rc_list) { |pathrc| rc_list_txt_fin << pathrc + "\n"}}
 		File.open(Messages.output_file_rc+fs_ext[0], "w"){ |f| f.write(rc_list_txt_fin)}
 	
 	elsif ARGV[1] == opt_sel[1]
