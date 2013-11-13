@@ -209,7 +209,7 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 		puts ""
 		puts Messages.fs_footprint
 		f = File.open(Messages.fs_find_file+fs_ext[0], "w")
-		Find.find('/'){|path| f.write(path + "\n") != Exclusions.fs_paths}
+		Find.find('/'){|path| f.write(path + "\n") != ((path.start_with? ".") || (path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home"))}
 		#Find.find('/') do |path|
    		#	if Exclusions.fs_paths
    		#		f.write(path + "\n")
