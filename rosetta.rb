@@ -222,7 +222,7 @@ elsif os_decided == "nix" && File.exist?(Variables.package_rh)
 		system(Cmd.net_stat+Messages.output_file_net_stat+Variables.fs_ext[0])
 		puts Messages.net_stat_txt_fin+Variables.fs_ext[0]+"."
 		
-		# Group information
+		# Group information <- ****** WORKING
 		puts ""
 		puts Messages.group_list_txt_fp
 		Etc.group {|g| group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
@@ -234,8 +234,9 @@ elsif os_decided == "nix" && File.exist?(Variables.package_rh)
 		# User information
 		puts ""
 		puts Messages.user_list_txt_fp
-		Etc.passwd {|u| Variables.user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
-		File.open(Messages.output_file_user+Variables.fs_ext[0], "w"){ |f| f.write(Variables.user_list_txt_fin)}
+		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
+		usr = File.open(Messages.output_file_user+Variables.fs_ext[0], "w")
+		user_list_txt_fin.each { |usr_list| usr.write(usr_list)}
 		puts Messages.user_list_txt+Variables.fs_ext[0]+"."
 		
 		# CHKCONFIG Information <- ******** WORKING
