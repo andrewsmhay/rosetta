@@ -7,6 +7,7 @@ require 'etc'
 # libs
 require 'determineos'
 require 'messages'
+require 'exclusions'
 
 os_select = Determineos.new
 os_decided = os_select.os.to_s
@@ -209,20 +210,11 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 		puts Messages.fs_footprint
 		f = File.open(Messages.fs_find_file+fs_ext[0], "w")
 		Find.find('/') do |path|
-   			if (! ((path.start_with? ".") || (path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home")))
+   			if Exclusions.fs_paths
    				f.write(path + "\n")
    			end
 		end
 		f.close()
-
-=begin
-		Find.find('/') do |path|
- 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home")))
-   				inputter << path + "\n"
-   			end
- 		end
-=end
-		#File.open(Messages.fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
 		puts Messages.fs_footprint_fin+fs_ext[0]+"."
 		# Network services
 		puts ""
