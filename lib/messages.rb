@@ -84,5 +84,8 @@ class Messages
 		def opt_sel_err
 			"[-] Usage: ./rosetta.rb <package_name> <pre> | <post|final>"
 		end
+		def file_footprint_done
+			fs_footprint_fin+Variables.fs_ext[0]+"."
+		end
 	end
 end

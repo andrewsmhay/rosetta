@@ -30,5 +30,20 @@ class Variables
 		def package_rh
 			"/usr/bin/yum"
 		end
+		def package_deb
+			"/usr/bin/apt-get"
+		end
+		def package_deb2
+			"/usr/bin/apt-file"
+		end
+		def package_cc
+			"/sbin/chkconfig"
+		end
+		def delim
+			['=',';',':',' ','|']
+		end
+		def comment
+			['#','//','/*','*/','*','='] 
+		end
 	end
 end
