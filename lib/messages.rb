@@ -37,7 +37,7 @@ class Messages
 			"Finished footprinting root filesystem. Results stored in " + fs_find_file
 		end
 		def fs_apt_file_txt_fin 
-			"Finished footprinting " + ARGV[0] + ". Results stored in " +ARGV[0]+".package."			
+			"Finished footprinting " + Variables.package_name + ". Results stored in " + Variables.package_name +".package."			
 		end
 		def output_file_rc
 			"startup."
