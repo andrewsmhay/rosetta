@@ -17,7 +17,6 @@ ARGV.each {|arg| commands << arg}
 rc_list_txt_fin = []
 group_list_txt_fin = []
 user_list_txt_fin = []
-#name_files = ['chkconfig','filesystem','group','services','startup','user']
 filetype_ary = []
 
 #####################
