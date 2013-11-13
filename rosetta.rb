@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-$LOAD_PATH << File.expand_path('~/rosetta/lib') ##### REMOVE BEFORE PUSHING TO GIT
+$LOAD_PATH << File.expand_path('./lib')
 #gems
 require 'rspec'
 require 'find'
@@ -207,12 +207,20 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 		# Filesystem footprinting
 		puts ""
 		puts Messages.fs_footprint
+		f = File.open(andrew.txt,"w")
+		Find.find('/') do |path|
+   			f.write(path + "\n")
+		end
+		f.close()
+
+=begin
 		Find.find('/') do |path|
  			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home")))
    				inputter << path + "\n"
    			end
  		end
-		File.open(Messages.fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
+=end
+		#File.open(Messages.fs_find_file+fs_ext[0], "w"){ |f| f.write(inputter)}
 		puts Messages.fs_footprint_fin+fs_ext[0]+"."
 		# Network services
 		puts ""
