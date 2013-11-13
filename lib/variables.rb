@@ -22,7 +22,7 @@ class Variables
 			[]
 		end
 		def name_files
-			['chkconfig','filesystem','group','services','startup','user']
+			['chkconfig','filesystem','group','services','user']
 		end
 		def package_name
 			ARGV[0]
