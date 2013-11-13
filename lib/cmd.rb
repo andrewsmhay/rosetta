@@ -1,7 +1,7 @@
 class Cmd
 	class << self
 		def fs_apt_file
-			"apt-file list " + Variables.package_name + " | grep -e share -v | cut -d ' ' -f2 > " + Variables.package_name+".package"
+			"apt-file list " + ARGV[0] + " | grep -e share -v | cut -d ' ' -f2 > " + ARGV[0] + ".package"
 		end
 		def apt_file_inst
 			"/usr/bin/apt-get install apt-file -y > /dev/null && /usr/bin/apt-file update > /dev/null"
