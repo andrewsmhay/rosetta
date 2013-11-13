@@ -22,7 +22,7 @@ class Cmd
 			File.open(Messages.fs_find_file+Variables.fs_ext[0], "w")
 		end
 		def exclude_and_write
-			Find.find('/'){|path| fs_open.write(path + "\n")} != ((path.start_with? ".") || (path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home"))}
+			Find.find('/'){|path| fs_open.write(path + "\n")} #!= ((path.start_with? ".") || (path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home"))}
 		end
 		def close_file
 			fs_open.close()

@@ -245,6 +245,7 @@ elsif os_decided == "nix" && File.exist?(Variables.package_rh)
 			end
 		File.open(Messages.output_filetype_ary+Variables.fs_ext[1], "w"){ |f| f.write((filetype_ary).join("\n"))}
 		end
+
 		puts Messages.post_analysis
 	end
 	
