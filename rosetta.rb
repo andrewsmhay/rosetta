@@ -207,7 +207,7 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 		# Filesystem footprinting
 		puts ""
 		puts Messages.fs_footprint
-		f = File.open(andrew.txt,"w")
+		f = File.open(Messages.fs_find_file+fs_ext[0], "w")
 		Find.find('/') do |path|
    			f.write(path + "\n")
 		end
