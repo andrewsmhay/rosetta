@@ -31,7 +31,7 @@ ARGV.each {|arg| commands << arg}
 #output_file_rc = "startup."
 #output_filetype_ary = "config_files."
 #config_files_fin = []
-#group_list_txt_fin = []
+group_list_txt_fin = []
 #output_file_group = "group."
 #group_list_txt = "Finished footprinting groups. Results stored in " + output_file_group
 #group_list_txt_fp = "Footprinting groups..."
@@ -204,38 +204,44 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 elsif os_decided == "nix" && File.exist?(Variables.package_rh)
 	if ARGV[1] == Variables.opt_sel[0]
 		puts Messages.rh
+		
 		# Filesystem footprinting
 		puts ""
 		puts Messages.fs_footprint
 		#Cmd.fs_open
-		Cmd.exclude_and_write
+		#Cmd.exclude_and_write
 		#Cmd.close_file
-		#f = File.open(Messages.fs_find_file+Variables.fs_ext[0], "w")
-		#Find.find('/'){|path| f.write(path + "\n") != ((path.start_with? ".") || (path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home"))}
-		#f.close()
+		f = File.open(Messages.fs_find_file+Variables.fs_ext[0], "w")
+		Find.find('/'){|path| f.write(path + "\n") != ((path.start_with? ".") || (path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home"))}
+		f.close()
 		puts Messages.fs_footprint_fin+Variables.fs_ext[0]+"."
-		# Network services
+		
+		# Network services <- *********  WORKING
 		puts ""
 		puts Messages.net_stat_txt
 		system(Cmd.net_stat+Messages.output_file_net_stat+Variables.fs_ext[0])
 		puts Messages.net_stat_txt_fin+Variables.fs_ext[0]+"."
+		
 		# Group information
 		puts ""
 		puts Messages.group_list_txt_fp
-		Etc.group {|g| Variables.group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
-		File.open(Messages.output_file_group+Variables.fs_ext[0], "w"){ |f| f.write(Variables.group_list_txt_fin)}
+		Etc.group {|g| group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
+		File.open(Messages.output_file_group+Variables.fs_ext[0], "w"){ |f| f.write(group_list_txt_fin)}
 		puts Messages.group_list_txt+Variables.fs_ext[0]+"."
+		
 		# User information
 		puts ""
 		puts Messages.user_list_txt_fp
 		Etc.passwd {|u| Variables.user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
 		File.open(Messages.output_file_user+Variables.fs_ext[0], "w"){ |f| f.write(Variables.user_list_txt_fin)}
 		puts Messages.user_list_txt+Variables.fs_ext[0]+"."
-		# CHKCONFIG Information
+		
+		# CHKCONFIG Information <- ******** WORKING
 		puts ""
 		puts Messages.chk_config_txt
 		system(Cmd.chk_config+Messages.output_file_chk_config+Variables.fs_ext[0])
 		puts Messages.chk_config_txt_fin+Variables.fs_ext[0]+"."
+		
 		# Startup binaries
 		puts ""
 		Dir.glob("/etc/rc?.d").each { |rc_list| Find.find(rc_list) { |pathrc| Variables.rc_list_txt_fin << pathrc + "\n"}}
