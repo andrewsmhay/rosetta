@@ -25,7 +25,7 @@ class Cmd
 			Find.find('/'){|path| fs_open.write(path + "\n") != ((path.start_with? ".") || (path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home"))}
 		end
 		def close_file
-			f.close()
+			fs_open.close()
 		end
 	end
 end
