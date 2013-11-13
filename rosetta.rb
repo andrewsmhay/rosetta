@@ -27,7 +27,7 @@ ARGV.each {|arg| commands << arg}
 #package_name = ARGV[0]
 #fs_apt_file = "apt-file list " + package_name + " | grep -e share -v | cut -d ' ' -f2 > " + package_name+".package"
 #fs_apt_file_txt_fin = "Finished footprinting " + package_name + ". Results stored in " +package_name+".package."
-#rc_list_txt_fin = []
+rc_list_txt_fin = []
 #output_file_rc = "startup."
 #output_filetype_ary = "config_files."
 #config_files_fin = []
@@ -116,9 +116,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		# Startup binaries
 		puts ""
 		Dir.glob("/etc/rc?.d").each do |rc_list|
-			Find.find(rc_list) do |pathrc|
-        Variables.rc_list_txt_fin << pathrc + "\n"
-			end
+			Find.find(rc_list) {|pathrc| rc_list_txt_fin << pathrc + "\n"}
 		end
 		File.open(Messages.output_file_rc+Variables.fs_ext[0], "w"){ |f| f.write(Variables.rc_list_txt_fin)}
 
@@ -247,8 +245,8 @@ elsif os_decided == "nix" && File.exist?(Variables.package_rh)
 		
 		# Startup binaries
 		puts ""
-		Dir.glob("/etc/rc?.d").each { |rc_list| Find.find(rc_list) { |pathrc| Variables.rc_list_txt_fin << pathrc + "\n"}}
-		File.open(Messages.output_file_rc+Variables.fs_ext[0], "w"){ |f| f.write(Variables.rc_list_txt_fin)}
+		Dir.glob("/etc/rc?.d").each { |rc_list| Find.find(rc_list) { |pathrc| rc_list_txt_fin << pathrc + "\n"}}
+		File.open(Messages.output_file_rc+Variables.fs_ext[0], "w"){ |f| f.write(rc_list_txt_fin)}
 	
 	elsif ARGV[1] == Variables.opt_sel[1]
 		puts Messages.post_fs_footprint
