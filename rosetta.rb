@@ -59,7 +59,7 @@ filetype_ary = []
 if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 	puts Messages.deb
 
-	if ARGV[1] == opt_sel[0]
+	if ARGV[1] == Variables.opt_sel[0]
 
 		unless !File.exist?("/usr/bin/apt-file")
 			puts Messages.apt_present
@@ -122,7 +122,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		end
 		File.open(Messages.output_file_rc+fs_ext[0], "w"){ |f| f.write(Variables.rc_list_txt_fin)}
 
-	elsif ARGV[1] == opt_sel[1]
+	elsif ARGV[1] == Variables.opt_sel[1]
 		puts Messages.post_fs_footprint
 		# Filesystem footprinting
 		puts ""
@@ -170,7 +170,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		end
 		File.open(Messages.output_file_rc+fs_ext[1], "w"){ |f| f.write(Variables.rc_list_txt_fin)}
 
-	else ARGV[1] == opt_sel[2]
+	else ARGV[1] == Variables.opt_sel[2]
 		puts Messages.post_a_compare
 		Variables.name_files.each do |naming|
 			f1 = IO.readlines(workingdir + "/" + naming + ".pre").map(&:chomp)
@@ -202,7 +202,7 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 # Red Hat and CentOS #
 ######################
 elsif os_decided == "nix" && File.exist?(Variables.package_rh)
-	if ARGV[1] == opt_sel[0]
+	if ARGV[1] == Variables.opt_sel[0]
 		puts Messages.rh
 		# Filesystem footprinting
 		puts ""
@@ -241,7 +241,7 @@ elsif os_decided == "nix" && File.exist?(Variables.package_rh)
 		Dir.glob("/etc/rc?.d").each { |rc_list| Find.find(rc_list) { |pathrc| Variables.rc_list_txt_fin << pathrc + "\n"}}
 		File.open(Messages.output_file_rc+fs_ext[0], "w"){ |f| f.write(Variables.rc_list_txt_fin)}
 	
-	elsif ARGV[1] == opt_sel[1]
+	elsif ARGV[1] == Variables.opt_sel[1]
 		puts Messages.post_fs_footprint
 		# Filesystem footprinting
 		puts ""
@@ -283,7 +283,7 @@ elsif os_decided == "nix" && File.exist?(Variables.package_rh)
 		end
 		File.open(Messages.output_file_rc+fs_ext[1], "w"){ |f| f.write(Variables.rc_list_txt_fin)}
 
-	else ARGV[1] == opt_sel[2]
+	else ARGV[1] == Variables.opt_sel[2]
 		puts Messages.post_a_compare
 		Variables.name_files.each do |naming|
 			f1 = IO.readlines(workingdir + "/" + naming + ".pre").map(&:chomp)
@@ -315,7 +315,7 @@ elsif os_decided == "nix" && File.exist?(Variables.package_rh)
 # Microsoft Windows #
 #####################
 elsif os_decided == "windows"
-	if ARGV[1] == opt_sel[0]
+	if ARGV[1] == Variables.opt_sel[0]
 		puts Messages.ms
 
 		# Filesystem footprinting
@@ -358,7 +358,7 @@ elsif os_decided == "windows"
 	    reg.each_key { |key, wtime| ... }                # Enumerate subkeys
 =end
 
-	elsif ARGV[1] == opt_sel[1]
+	elsif ARGV[1] == Variables.opt_sel[1]
 		puts Messages.post_fs_footprint
 
 		# Filesystem footprinting
@@ -396,7 +396,7 @@ elsif os_decided == "windows"
 		
 		#Windows Registry
 
-	else ARGV[1] == opt_sel[2]
+	else ARGV[1] == Variables.opt_sel[2]
 		puts Messages.post_a_compare
 		Variables.name_files.each do |naming|
 			f1 = IO.readlines(workingdir + "/" + naming + ".pre").map(&:chomp)
