@@ -12,44 +12,11 @@ require 'cmd'
 
 os_select = Determineos.new
 os_decided = os_select.os.to_s
-#workingdir = '.'
-#apt_file_inst = "/usr/bin/apt-get install apt-file -y > /dev/null && /usr/bin/apt-file update > /dev/null"
-#inputter = []
-#Variables.fs_ext = ['pre', 'post', 'out']
-#opt_sel = ['pre', 'post', 'final']
-#opt_sel_err = "[-] Usage: ./rosetta.rb <package_name> <pre> | <post|final>"
-#fs_footprint_fin = "Finished footprinting root filesystem. Results stored in " + fs_find_file
-#fs_apt_file_txt = "Footprinting package contents..."
-
 commands = []
 ARGV.each {|arg| commands << arg}
-
-#package_name = ARGV[0]
-#fs_apt_file = "apt-file list " + package_name + " | grep -e share -v | cut -d ' ' -f2 > " + package_name+".package"
-#fs_apt_file_txt_fin = "Finished footprinting " + package_name + ". Results stored in " +package_name+".package."
 rc_list_txt_fin = []
-#output_file_rc = "startup."
-#output_filetype_ary = "config_files."
-#config_files_fin = []
 group_list_txt_fin = []
-#output_file_group = "group."
-#group_list_txt = "Finished footprinting groups. Results stored in " + output_file_group
-#group_list_txt_fp = "Footprinting groups..."
 user_list_txt_fin = []
-#output_file_user = "user."
-#user_list_txt = "Finished footprinting users. Results stored in " + output_file_user
-#user_list_txt_fp = "Footprinting users..."
-#net_stat = "/bin/netstat -tulpn > "
-#net_stat_win = "netstat > "
-#net_stat_txt = "Footprinting services..."
-#output_file_net_stat = "services."
-#net_stat_txt_fin = "Finished footprinting network ports. Results stored in " + output_file_net_stat
-#apt_file_inst_chk = "/usr/bin/apt-get install chkconfig -y > /dev/null"
-#chk_config = "chkconfig --list > "
-#chk_config_txt = "Footprinting service startup state..."
-#output_file_chk_config = "chkconfig."
-#chk_config_txt_fin = "Finished footprinting service startup state. Results stored in " + output_file_chk_config
-
 #name_files = ['chkconfig','filesystem','group','services','startup','user']
 filetype_ary = []
 
@@ -113,13 +80,6 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		system(Cmd.chk_config+Messages.output_file_chk_config+Variables.fs_ext[0])
 		puts Messages.chk_config_txt_fin+Variables.fs_ext[0]+"."
 
-		# Startup binaries
-		puts ""
-		Dir.glob("/etc/rc?.d").each do |rc_list|
-			Find.find(rc_list) {|pathrc| rc_list_txt_fin << pathrc + "\n"}
-		end
-		File.open(Messages.output_file_rc+Variables.fs_ext[0], "w"){ |f| f.write(Variables.rc_list_txt_fin)}
-
 	elsif ARGV[1] == Variables.opt_sel[1]
 		puts Messages.post_fs_footprint
 		# Filesystem footprinting
@@ -159,14 +119,6 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 		puts Messages.chk_config_txt
 		system(Cmd.chk_config+Messages.output_file_chk_config+Variables.fs_ext[1])
 		puts Messages.chk_config_txt_fin+Variables.fs_ext[1]+"."
-
-		# Startup binaries
-		puts ""
-		Dir.glob("/etc/rc?.d").each do |rc_list|
-			Find.find(rc_list) do |pathrc| Variables.rc_list_txt_fin << pathrc + "\n"
-			end
-		end
-		File.open(Messages.output_file_rc+Variables.fs_ext[1], "w"){ |f| f.write(Variables.rc_list_txt_fin)}
 
 	else ARGV[1] == Variables.opt_sel[2]
 		puts Messages.post_a_compare
@@ -243,11 +195,6 @@ elsif os_decided == "nix" && File.exist?(Variables.package_rh)
 		system(Cmd.chk_config+Messages.output_file_chk_config+Variables.fs_ext[0])
 		puts Messages.chk_config_txt_fin+Variables.fs_ext[0]+"."
 		
-		# Startup binaries
-		puts ""
-		Dir.glob("/etc/rc?.d").each { |rc_list| Find.find(rc_list) { |pathrc| rc_list_txt_fin << pathrc + "\n"}}
-		File.open(Messages.output_file_rc+Variables.fs_ext[0], "w"){ |f| f.write(rc_list_txt_fin)}
-	
 	elsif ARGV[1] == Variables.opt_sel[1]
 		puts Messages.post_fs_footprint
 		# Filesystem footprinting
@@ -282,14 +229,7 @@ elsif os_decided == "nix" && File.exist?(Variables.package_rh)
 		puts Messages.chk_config_txt
 		system(Cmd.chk_config+Messages.output_file_chk_config+Variables.fs_ext[1])
 		puts Messages.chk_config_txt_fin+Variables.fs_ext[1]+"."
-		# Startup binaries
-		puts ""
-		Dir.glob("/etc/rc?.d").each do |rc_list|
-			Find.find(rc_list) do |pathrc| Variables.rc_list_txt_fin << pathrc + "\n"
-			end
-		end
-		File.open(Messages.output_file_rc+Variables.fs_ext[1], "w"){ |f| f.write(Variables.rc_list_txt_fin)}
-
+		
 	else ARGV[1] == Variables.opt_sel[2]
 		puts Messages.post_a_compare
 		Variables.name_files.each do |naming|
