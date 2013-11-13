@@ -208,11 +208,11 @@ elsif os_decided == "nix" && File.exist?(Variables.package_rh)
 		puts ""
 		puts Messages.fs_footprint
 		#Cmd.fs_open
-		#Cmd.exclude_and_write
+		Cmd.exclude_and_write
 		#Cmd.close_file
-		f = File.open(Messages.fs_find_file+Variables.fs_ext[0], "w")
-		Find.find('/'){|path| f.write(path + "\n") != ((path.start_with? ".") || (path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home"))}
-		f.close()
+		#f = File.open(Messages.fs_find_file+Variables.fs_ext[0], "w")
+		#Find.find('/'){|path| f.write(path + "\n") != ((path.start_with? ".") || (path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home"))}
+		#f.close()
 		puts Messages.fs_footprint_fin+Variables.fs_ext[0]+"."
 		# Network services
 		puts ""
