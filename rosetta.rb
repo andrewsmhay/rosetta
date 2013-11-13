@@ -37,84 +37,73 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 			system(Cmd.apt_file_inst_chk)
 		end
 
-		# Filesystem footprinting
-		puts ""
-		puts Messages.fs_footprint
-		Find.find('/') do |path|
- 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home")))
-   				inputter << path + "\n"
-   			end
- 		end
-		File.open(Messages.fs_find_file+Variables.fs_ext[0], "w"){ |f| f.write(inputter)}
+		f = File.open(Messages.fs_find_file+Variables.fs_ext[0], "w")
+		Find.find('/'){|path| f.write(path + "\n") != ((path.start_with? ".") || (path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home"))}
+		f.close()
 		puts Messages.fs_footprint_fin+Variables.fs_ext[0]+"."
-
-		# Package contents
-		puts ""
-		puts Messages.fs_apt_file_txt
-		system(Cmd.fs_apt_file)
-		puts Messages.fs_apt_file_txt_fin
-
-		# Network services
+		
+		# Network services <- *********  WORKING
 		puts ""
 		puts Messages.net_stat_txt
 		system(Cmd.net_stat+Messages.output_file_net_stat+Variables.fs_ext[0])
 		puts Messages.net_stat_txt_fin+Variables.fs_ext[0]+"."
-
-		# Group information
+		
+		# Group information <- ****** WORKING
 		puts ""
 		puts Messages.group_list_txt_fp
-		Etc.group {|g| Variables.group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
-		File.open(Messages.output_file_group+Variables.fs_ext[0], "w"){ |f| f.write(Variables.group_list_txt_fin)}
+		Etc.group {|g| group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
+		grp = File.open(Messages.output_file_group+Variables.fs_ext[0], "w")
+		group_list_txt_fin.each {|grp_list| grp.write(grp_list)}
+		grp.close()
 		puts Messages.group_list_txt+Variables.fs_ext[0]+"."
-
-		# User information
+		
+		# User information <- ****** WORKING
 		puts ""
 		puts Messages.user_list_txt_fp
-		Etc.passwd {|u| Variables.user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
-		File.open(Messages.output_file_user+Variables.fs_ext[0], "w"){ |f| f.write(Variables.user_list_txt_fin)}
+		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
+		usr = File.open(Messages.output_file_user+Variables.fs_ext[0], "w")
+		user_list_txt_fin.each { |usr_list| usr.write(usr_list)}
 		puts Messages.user_list_txt+Variables.fs_ext[0]+"."
-
-		# CHKCONFIG Information
+		
+		# CHKCONFIG Information <- ******** WORKING
 		puts ""
 		puts Messages.chk_config_txt
 		system(Cmd.chk_config+Messages.output_file_chk_config+Variables.fs_ext[0])
 		puts Messages.chk_config_txt_fin+Variables.fs_ext[0]+"."
 
 	elsif ARGV[1] == Variables.opt_sel[1]
-		puts Messages.post_fs_footprint
-		# Filesystem footprinting
+		puts Messages.post_fs_footprint 
+		# Filesystem footprinting  <- *********  WORKING
 		puts ""
-		puts Messages.fs_footprint
-		Find.find('/') do |path|
- 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home")))
-   				inputter << path + "\n"
-      		end
- 		end
-		File.open(fs_find_file+Variables.fs_ext[1], "w"){ |f| f.write(inputter)}
+		pf = File.open(Messages.fs_find_file+Variables.fs_ext[1], "w")
+		Find.find('/'){|path| f.write(path + "\n") != ((path.start_with? ".") || (path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home"))}
+		f.close()
 		puts Messages.fs_footprint_fin+Variables.fs_ext[1]+"."
 
-		# Package contents not required for post-install footprinting
-		# Network services
+		# Network services <- *********  WORKING
 		puts ""
 		puts Messages.net_stat_txt
 		system(Cmd.net_stat+Messages.output_file_net_stat+Variables.fs_ext[1])
-		puts Messages.net_stat_txt_fin+Variables.fs_ext[1]+"."
-
-		# Group information
+		puts Messages.net_stat_txt_fin+Variables.fs_ext[0]+"."
+		
+		# Group information <- ****** WORKING
 		puts ""
 		puts Messages.group_list_txt_fp
-		Etc.group {|g| Variables.group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
-		File.open(Messages.output_file_group+Variables.fs_ext[1], "w"){ |f| f.write(Variables.group_list_txt_fin)}
+		Etc.group {|g| group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
+		grp = File.open(Messages.output_file_group+Variables.fs_ext[1], "w")
+		group_list_txt_fin.each {|grp_list| grp.write(grp_list)}
+		grp.close()
 		puts Messages.group_list_txt+Variables.fs_ext[1]+"."
 
-		# User information
+		# User information <- ****** WORKING
 		puts ""
 		puts Messages.user_list_txt_fp
-		Etc.passwd {|u| Variables.user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
-		File.open(Messages.output_file_user+Variables.fs_ext[1], "w"){ |f| f.write(Variables.user_list_txt_fin)}
+		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
+		usr = File.open(Messages.output_file_user+Variables.fs_ext[1], "w")
+		user_list_txt_fin.each { |usr_list| usr.write(usr_list)}
 		puts Messages.user_list_txt+Variables.fs_ext[1]+"."
-
-		# CHKCONFIG Information
+		
+		# CHKCONFIG Information <- ******** WORKING
 		puts ""
 		puts Messages.chk_config_txt
 		system(Cmd.chk_config+Messages.output_file_chk_config+Variables.fs_ext[1])
@@ -181,7 +170,7 @@ elsif os_decided == "nix" && File.exist?(Variables.package_rh)
 		grp.close()
 		puts Messages.group_list_txt+Variables.fs_ext[0]+"."
 		
-		# User information
+		# User information <- ****** WORKING
 		puts ""
 		puts Messages.user_list_txt_fp
 		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
@@ -196,35 +185,38 @@ elsif os_decided == "nix" && File.exist?(Variables.package_rh)
 		puts Messages.chk_config_txt_fin+Variables.fs_ext[0]+"."
 		
 	elsif ARGV[1] == Variables.opt_sel[1]
-		puts Messages.post_fs_footprint
-		# Filesystem footprinting
+		puts Messages.post_fs_footprint 
+		# Filesystem footprinting  <- *********  WORKING
 		puts ""
-		puts Messages.fs_footprint
-		Find.find('/') do |path|
- 			if (! ((path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home")))
-   				inputter << path + "\n"
-   			end
- 		end
-		File.open(Messages.fs_find_file+Variables.fs_ext[1], "w"){ |f| f.write(inputter)}
+		pf = File.open(Messages.fs_find_file+Variables.fs_ext[1], "w")
+		Find.find('/'){|path| f.write(path + "\n") != ((path.start_with? ".") || (path.start_with? "/dev/") || (path.start_with? "/proc/") || (path.start_with? "/sys/") || (path.start_with? "/root/") || (path.start_with? "/usr/share/doc/") || (path.start_with? "/var/lib/yum") || (path.start_with? "/home"))}
+		f.close()
 		puts Messages.fs_footprint_fin+Variables.fs_ext[1]+"."
-		# Network services
+
+		# Network services <- *********  WORKING
 		puts ""
 		puts Messages.net_stat_txt
 		system(Cmd.net_stat+Messages.output_file_net_stat+Variables.fs_ext[1])
-		puts Messages.net_stat_txt_fin+Variables.fs_ext[1]+"."
-		# Group information
+		puts Messages.net_stat_txt_fin+Variables.fs_ext[0]+"."
+		
+		# Group information <- ****** WORKING
 		puts ""
 		puts Messages.group_list_txt_fp
-		Etc.group {|g| Variables.group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
-		File.open(Messages.output_file_group+Variables.fs_ext[1], "w"){ |f| f.write(Variables.group_list_txt_fin)}
+		Etc.group {|g| group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
+		grp = File.open(Messages.output_file_group+Variables.fs_ext[1], "w")
+		group_list_txt_fin.each {|grp_list| grp.write(grp_list)}
+		grp.close()
 		puts Messages.group_list_txt+Variables.fs_ext[1]+"."
-		# User information
+
+		# User information <- ****** WORKING
 		puts ""
 		puts Messages.user_list_txt_fp
-		Etc.passwd {|u| Variables.user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
-		File.open(Messages.output_file_user+Variables.fs_ext[1], "w"){ |f| f.write(Variables.user_list_txt_fin)}
+		Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
+		usr = File.open(Messages.output_file_user+Variables.fs_ext[1], "w")
+		user_list_txt_fin.each { |usr_list| usr.write(usr_list)}
 		puts Messages.user_list_txt+Variables.fs_ext[1]+"."
-		# CHKCONFIG Information
+		
+		# CHKCONFIG Information <- ******** WORKING
 		puts ""
 		puts Messages.chk_config_txt
 		system(Cmd.chk_config+Messages.output_file_chk_config+Variables.fs_ext[1])
@@ -235,12 +227,12 @@ elsif os_decided == "nix" && File.exist?(Variables.package_rh)
 		Variables.name_files.each do |naming|
 			f1 = IO.readlines(workingdir + "/" + naming + ".pre").map(&:chomp)
 			f2 = IO.readlines(workingdir + "/" + naming + ".post").map(&:chomp)
-		File.open(workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
+		File.open(Variables.workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
 		end
 
 		puts Messages.prob_config
 
-		IO.readlines(workingdir + "/filesystem.out").map(&:chomp).each do |filetype|
+		IO.readlines(Variables.workingdir + "/filesystem.out").map(&:chomp).each do |filetype|
 			if filetype =~ /\.conf/
 				filetype_ary << filetype
 			elsif filetype =~ /\.properties/
@@ -346,8 +338,8 @@ elsif os_decided == "windows"
 	else ARGV[1] == Variables.opt_sel[2]
 		puts Messages.post_a_compare
 		Variables.name_files.each do |naming|
-			f1 = IO.readlines(workingdir + "/" + naming + ".pre").map(&:chomp)
-			f2 = IO.readlines(workingdir + "/" + naming + ".post").map(&:chomp)
+			f1 = IO.readlines(Variables.workingdir + "/" + naming + ".pre").map(&:chomp)
+			f2 = IO.readlines(Variables.workingdir + "/" + naming + ".post").map(&:chomp)
 		File.open(workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
 		end
 		puts Messages.post_analysis
