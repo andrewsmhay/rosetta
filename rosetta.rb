@@ -226,7 +226,8 @@ elsif os_decided == "nix" && File.exist?(Variables.package_rh)
 		puts ""
 		puts Messages.group_list_txt_fp
 		Etc.group {|g| group_list_txt_fin << g.name + ": " + g.mem.join(', ') + "\n"}
-		g = File.open(Messages.output_file_group+Variables.fs_ext[0], "w"){ |path| g.write(group_list_txt_fin)}
+		g = File.open(Messages.output_file_group+Variables.fs_ext[0], "w")
+		g.each { |path| path.write(group_list_txt_fin)}
 		g.close()
 		puts Messages.group_list_txt+Variables.fs_ext[0]+"."
 		
