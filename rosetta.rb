@@ -209,11 +209,12 @@ elsif os_decided == "nix" && File.exist?("/usr/bin/yum")
 		puts ""
 		puts Messages.fs_footprint
 		f = File.open(Messages.fs_find_file+fs_ext[0], "w")
-		Find.find('/') do |path|
-   			if Exclusions.fs_paths
-   				f.write(path + "\n")
-   			end
-		end
+		Find.find('/'){|path| f.write(path + "\n") != Exclusions.fs_paths}
+		#Find.find('/') do |path|
+   		#	if Exclusions.fs_paths
+   		#		f.write(path + "\n")
+   		#	end
+		#end
 		f.close()
 		puts Messages.fs_footprint_fin+fs_ext[0]+"."
 		# Network services
