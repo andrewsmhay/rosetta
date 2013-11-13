@@ -123,14 +123,14 @@ if os_decided == "nix" && File.exist?("/usr/bin/apt-get")
 	else ARGV[1] == Variables.opt_sel[2]
 		puts Messages.post_a_compare
 		Variables.name_files.each do |naming|
-			f1 = IO.readlines(workingdir + "/" + naming + ".pre").map(&:chomp)
-			f2 = IO.readlines(workingdir + "/" + naming + ".post").map(&:chomp)
-		File.open(workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
+			f1 = IO.readlines(Variables.workingdir + "/" + naming + ".pre").map(&:chomp)
+			f2 = IO.readlines(Variables.workingdir + "/" + naming + ".post").map(&:chomp)
+		File.open(Variables.workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
 		end
 		
 		puts Messages.prob_config
 
-		IO.readlines(workingdir + "/filesystem.out").map(&:chomp).each do |filetype|
+		IO.readlines(Variables.workingdir + "/filesystem.out").map(&:chomp).each do |filetype|
 			if filetype =~ /\.conf/
 				filetype_ary << filetype
 			elsif filetype =~ /\.properties/
