@@ -63,13 +63,13 @@ if os_decided == "nix" && File.exist?(Variables.package_deb)
 		usr = File.open(Messages.output_file_user+Variables.fs_ext[0], "w")
 		user_list_txt_fin.each { |usr_list| usr.write(usr_list)}
 		puts Messages.user_list_txt+Variables.fs_ext[0]+"."
-		
+=begin		
 		# CHKCONFIG Information
 		puts ""
 		puts Messages.chk_config_txt
 		system(Cmd.chk_config+Messages.output_file_chk_config+Variables.fs_ext[0])
 		puts Messages.chk_config_txt_fin+Variables.fs_ext[0]+"."
-
+=end
 	elsif ARGV[1] == Variables.opt_sel[1]
 		puts Messages.post_fs_footprint 
 		# Filesystem footprinting
@@ -101,13 +101,13 @@ if os_decided == "nix" && File.exist?(Variables.package_deb)
 		usr = File.open(Messages.output_file_user+Variables.fs_ext[1], "w")
 		user_list_txt_fin.each { |usr_list| usr.write(usr_list)}
 		puts Messages.user_list_txt+Variables.fs_ext[1]+"."
-		
+=begin		
 		# CHKCONFIG Information
 		puts ""
 		puts Messages.chk_config_txt
 		system(Cmd.chk_config+Messages.output_file_chk_config+Variables.fs_ext[1])
 		puts Messages.chk_config_txt_fin+Variables.fs_ext[1]+"."
-
+=end
 	else ARGV[1] == Variables.opt_sel[2]
 		puts Messages.post_a_compare
 		Variables.name_files.each do |naming|
