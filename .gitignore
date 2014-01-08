@@ -2,3 +2,4 @@
 *.sublime-workspace
 *.pre
 *.post
+*.out

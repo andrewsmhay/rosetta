@@ -268,25 +268,25 @@ elsif os_decided == "windows"
 		# Network services
 		puts ""
 		puts Messages.net_stat_txt
-		Cmd.netstat_cmd
+		system(Cmd.net_stat_win+Messages.output_file_net_stat+Variables.fs_ext[0])
 		puts Messages.net_stat_txt_fin+Variables.fs_ext[0]+"."
 
 		# Group information
 		puts ""
 		puts Messages.group_list_txt_fp
-		Cmd.wmic_grp
+		system(Cmd.wmic_grp + Messages.output_file_group + Variables.fs_ext[0])
 		puts Messages.group_list_txt+Variables.fs_ext[0]+"."
 
  		# User information
 		puts ""
 		puts Messages.user_list_txt_fp
-		Cmd.wmic_usr
+		system(Cmd.wmic_usr + Messages.output_file_user + Variables.fs_ext[0])
 		puts Messages.user_list_txt+Variables.fs_ext[0]+"."
 
 		# CHKCONFIG Information
 		puts ""
 		puts Messages.chk_config_txt
-		Cmd.wmic_srv
+		system(Cmd.wmic_srv + Messages.output_file_chk_config + Variables.fs_ext[0])
 		puts Messages.chk_config_txt_fin+Variables.fs_ext[0]+"."
 
 =begin		
@@ -310,25 +310,25 @@ elsif os_decided == "windows"
 		# Network services
 		puts ""
 		puts Messages.net_stat_txt
-		Cmd.netstat_cmd
+		system(Cmd.net_stat_win+Messages.output_file_net_stat+Variables.fs_ext[1])
 		puts Messages.net_stat_txt_fin+Variables.fs_ext[1]+"."
 
 		# Group information
 		puts ""
 		puts Messages.group_list_txt_fp
-		Cmd.wmic_grp
+		system(Cmd.wmic_grp + Messages.output_file_group + Variables.fs_ext[1])
 		puts Messages.group_list_txt+Variables.fs_ext[1]+"."
 
 		# User information
 		puts ""
 		puts Messages.user_list_txt_fp
-		Cmd.wmic_usr
+		system(Cmd.wmic_usr + Messages.output_file_user + Variables.fs_ext[1])
 		puts Messages.user_list_txt+Variables.fs_ext[1]+"."
 
 		# CHKCONFIG Information
 		puts ""
 		puts Messages.chk_config_txt
-		Cmd.wmic_srv
+		system(Cmd.wmic_srv + Messages.output_file_chk_config + Variables.fs_ext[1])
 		puts Messages.chk_config_txt_fin+Variables.fs_ext[1]+"."
 		
 		#Windows Registry
