@@ -36,5 +36,8 @@ class Cmd
 		def wmic_srv
 			"wmic SERVICE LIST FULL > "
 		end
+		def win_reg
+			"reg query "
+		end
 	end
 end

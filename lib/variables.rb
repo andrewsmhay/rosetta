@@ -45,5 +45,8 @@ class Variables
 		def comment
 			['#','//','/*','*/','*','='] 
 		end
+		def reg_roots
+			["HKLM", "HKCU", "HKCR", "HKU", "HKCC"]
+		end
 	end
 end
