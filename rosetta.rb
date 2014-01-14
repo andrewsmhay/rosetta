@@ -63,6 +63,33 @@ def footprint_nix(fs_ext = "pre", os="")
 	puts Messages.services_finished+fs_ext+"."
 end
 
+def final_compare_nix
+	puts Messages.post_a_compare
+	Variables.name_files.each do |naming|
+		f1 = IO.readlines(Variables.workingdir + "/" + naming + ".pre").map(&:chomp)
+		f2 = IO.readlines(Variables.workingdir + "/" + naming + ".post").map(&:chomp)
+		File.open(Variables.workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
+	end
+	
+	puts Messages.prob_config
+
+	IO.readlines(Variables.workingdir + "/filesystem.out").map(&:chomp).each do |filetype|
+		if filetype =~ /\.conf/
+			@filetype_ary << filetype
+		elsif filetype =~ /\.properties/
+			@filetype_ary << filetype
+		elsif filetype =~ /\.config/
+			@filetype_ary << filetype
+		elsif filetype =~ /\.xml/
+			@filetype_ary << filetype
+		elsif filetype =~ /\.json/
+			@filetype_ary << filetype
+		end
+		File.open(Messages.output_filetype_ary+Variables.fs_ext[2], "w"){ |f| f.write((@filetype_ary).join("\n"))}
+	end
+	puts Messages.post_analysis
+end
+
 
 #####################
 # Debian and Ubuntu #
@@ -100,30 +127,7 @@ if @os_decided == "nix" && File.exist?(Variables.package_deb)
 		footprint_nix(fs_ext, "ubuntu")
 
 	else ARGV[1] == Variables.opt_sel[2]
-		puts Messages.post_a_compare
-		Variables.name_files.each do |naming|
-			f1 = IO.readlines(Variables.workingdir + "/" + naming + ".pre").map(&:chomp)
-			f2 = IO.readlines(Variables.workingdir + "/" + naming + ".post").map(&:chomp)
-		File.open(Variables.workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
-		end
-		
-		puts Messages.prob_config
-
-		IO.readlines(Variables.workingdir + "/filesystem.out").map(&:chomp).each do |filetype|
-			if filetype =~ /\.conf/
-				@filetype_ary << filetype
-			elsif filetype =~ /\.properties/
-				@filetype_ary << filetype
-			elsif filetype =~ /\.config/
-				@filetype_ary << filetype
-			elsif filetype =~ /\.xml/
-				@filetype_ary << filetype
-			elsif filetype =~ /\.json/
-				@filetype_ary << filetype
-			end
-		File.open(Messages.output_filetype_ary+Variables.fs_ext[2], "w"){ |f| f.write((@filetype_ary).join("\n"))}
-		end
-		puts Messages.post_analysis
+		final_compare_nix
 	end
 
 
@@ -146,31 +150,7 @@ elsif @os_decided == "nix" && File.exist?(Variables.package_rh)
 		footprint_nix(fs_ext, "redhat")
 		
 	else ARGV[1] == Variables.opt_sel[2]
-		puts Messages.post_a_compare
-		Variables.name_files.each do |naming|
-			f1 = IO.readlines(Variables.workingdir + "/" + naming + ".pre").map(&:chomp)
-			f2 = IO.readlines(Variables.workingdir + "/" + naming + ".post").map(&:chomp)
-		File.open(Variables.workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
-		end
-
-		puts Messages.prob_config
-
-		IO.readlines(Variables.workingdir + "/filesystem.out").map(&:chomp).each do |filetype|
-			if filetype =~ /\.conf/
-				@filetype_ary << filetype
-			elsif filetype =~ /\.properties/
-				@filetype_ary << filetype
-			elsif filetype =~ /\.config/
-				@filetype_ary << filetype
-			elsif filetype =~ /\.xml/
-				@filetype_ary << filetype
-			elsif filetype =~ /\.json/
-				@filetype_ary << filetype
-			end
-		File.open(Messages.output_filetype_ary+Variables.fs_ext[1], "w"){ |f| f.write((@filetype_ary).join("\n"))}
-		end
-
-		puts Messages.post_analysis
+		final_compare_nix
 	end
 	
 
