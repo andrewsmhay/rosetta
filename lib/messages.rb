@@ -64,22 +64,22 @@ class Messages
 			"Footprinting users..."
 		end
 		def net_stat_txt
-			"Footprinting services..."
+			"Footprinting network services..."
 		end
 		def output_file_net_stat
-			"services."
+			"net_services."
 		end
 		def net_stat_txt_fin
 			"Finished footprinting network ports. Results stored in " + output_file_net_stat
 		end
-		def chk_config_txt
+		def services_txt
 			"Footprinting service startup state..."
 		end
-		def output_file_chk_config
-			"chkconfig."
+		def output_file_services
+			"services."
 		end
-		def chk_config_txt_fin
-			"Finished footprinting service startup state. Results stored in " + output_file_chk_config
+		def services_finished
+			"Finished footprinting service startup state. Results stored in " + output_file_services
 		end
 		def opt_sel_err
 			"[-] Usage: ./rosetta.rb <package_name> <pre> | <post|final>"

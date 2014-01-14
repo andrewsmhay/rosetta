@@ -4,19 +4,27 @@ class Cmd
 			"apt-file list " + ARGV[0] + " | grep -e share -v | cut -d ' ' -f2 > " + ARGV[0] + ".package"
 		end
 		def apt_file_inst
-			"/usr/bin/apt-get install apt-file -y > /dev/null && /usr/bin/apt-file update > /dev/null"
+			"sudo /usr/bin/apt-get install apt-file -y > /dev/null && /usr/bin/apt-file update > /dev/null"
 		end
 		def apt_file_inst_chk
-			"/usr/bin/apt-get install chkconfig -y > /dev/null"
+			"sudo /usr/bin/apt-get install chkconfig -y > /dev/null"
 		end
 		def net_stat
-			"/bin/netstat -tulpn > "
+			"sudo /bin/netstat -tulpn > "
 		end
 		def net_stat_win
 			"netstat > "
 		end
-		def chk_config
-			"chkconfig --list > "
+		def list_services(os="")
+			case os
+			when "ubuntu", "debian"
+				"sudo initctl list > "
+			when "redhat", "centos"
+				"sudo chkconfig --list > "
+			else
+				"Error. Unsupported os: #{os}. Exiting"
+				exit -1
+			end 
 		end
 		def fs_open
 			File.open(Messages.fs_find_file+Variables.fs_ext[0], "w")
