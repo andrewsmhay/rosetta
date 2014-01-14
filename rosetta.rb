@@ -268,33 +268,35 @@ elsif os_decided == "windows"
 		# Network services
 		puts ""
 		puts Messages.net_stat_txt
-		Cmd.netstat_cmd
+		system(Cmd.net_stat_win+Messages.output_file_net_stat+Variables.fs_ext[0])
 		puts Messages.net_stat_txt_fin+Variables.fs_ext[0]+"."
 
 		# Group information
 		puts ""
 		puts Messages.group_list_txt_fp
-		Cmd.wmic_grp
+		system(Cmd.wmic_grp + Messages.output_file_group + Variables.fs_ext[0])
 		puts Messages.group_list_txt+Variables.fs_ext[0]+"."
 
  		# User information
 		puts ""
 		puts Messages.user_list_txt_fp
-		Cmd.wmic_usr
+		system(Cmd.wmic_usr + Messages.output_file_user + Variables.fs_ext[0])
 		puts Messages.user_list_txt+Variables.fs_ext[0]+"."
 
 		# CHKCONFIG Information
 		puts ""
 		puts Messages.chk_config_txt
-		Cmd.wmic_srv
+		system(Cmd.wmic_srv + Messages.output_file_chk_config + Variables.fs_ext[0])
 		puts Messages.chk_config_txt_fin+Variables.fs_ext[0]+"."
-
-=begin		
+	
 		# Windows Registry
-		Win32::Registry::HKEY_CURRENT_USER.open('SOFTWARE') do |reg|
-		reg.each_value do |name, type, data|        # Enumerate values
-	    reg.each_key { |key, wtime| ... }                # Enumerate subkeys
-=end
+		puts ""
+		puts Messages.reg_fp
+		Variables.reg_roots.each_with_index do |root, i|
+			puts Messages.reg_fp_single(root, i, Variables.reg_roots.length)
+			system(Cmd.win_reg + root + " /s >> registry." + Variables.fs_ext[0])
+		end
+		puts Messages.reg_fp_done + Variables.fs_ext[0]
 
 	elsif ARGV[1] == Variables.opt_sel[1]
 		puts Messages.post_fs_footprint
@@ -310,44 +312,55 @@ elsif os_decided == "windows"
 		# Network services
 		puts ""
 		puts Messages.net_stat_txt
-		Cmd.netstat_cmd
+		system(Cmd.net_stat_win+Messages.output_file_net_stat+Variables.fs_ext[1])
 		puts Messages.net_stat_txt_fin+Variables.fs_ext[1]+"."
 
 		# Group information
 		puts ""
 		puts Messages.group_list_txt_fp
-		Cmd.wmic_grp
+		system(Cmd.wmic_grp + Messages.output_file_group + Variables.fs_ext[1])
 		puts Messages.group_list_txt+Variables.fs_ext[1]+"."
 
 		# User information
 		puts ""
 		puts Messages.user_list_txt_fp
-		Cmd.wmic_usr
+		system(Cmd.wmic_usr + Messages.output_file_user + Variables.fs_ext[1])
 		puts Messages.user_list_txt+Variables.fs_ext[1]+"."
 
 		# CHKCONFIG Information
 		puts ""
 		puts Messages.chk_config_txt
-		Cmd.wmic_srv
+		system(Cmd.wmic_srv + Messages.output_file_chk_config + Variables.fs_ext[1])
 		puts Messages.chk_config_txt_fin+Variables.fs_ext[1]+"."
 		
 		#Windows Registry
+		puts ""
+		puts Messages.reg_fp
+		Variables.reg_roots.each_with_index do |root, i|
+			puts Messages.reg_fp_single(root, i, Variables.reg_roots.length)
+			system(Cmd.win_reg + root + " /s >> registry." + Variables.fs_ext[1])
+		end
+		puts Messages.reg_fp_done + Variables.fs_ext[1]
 
 	else ARGV[1] == Variables.opt_sel[2]
 		puts Messages.post_a_compare
 		Variables.name_files.each do |naming|
 			f1 = IO.readlines(Variables.workingdir + "/" + naming + ".pre").map(&:chomp)
 			f2 = IO.readlines(Variables.workingdir + "/" + naming + ".post").map(&:chomp)
-		File.open(Variables.workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
+			File.open(Variables.workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\r\n")) }
 		end
+
+		# Registry has a different operation, so it's not part of the loop above
+		reg_data_pre = File.open(Messages.output_file_reg + Variables.fs_ext[0]).read.split(/\n(?=HKEY)/).map(&:strip)
+		reg_data_post = File.open(Messages.output_file_reg + Variables.fs_ext[1]).read.split(/\n(?=HKEY)/).map(&:strip)
+		
+		File.open(Variables.workingdir + "/" + Messages.output_file_reg + Variables.fs_ext[2], "w") do |f|
+			f.write((reg_data_post - reg_data_pre).join("\r\n"))
+		end
+
 		puts Messages.post_analysis
 	end
-
-#
-# Win32::Registry::HKEY_LOCAL_MACHINE.open('SOFTWARE\') do |reg|
-# reg.each_value { |name, type, data| ... }        # Enumerate values
-# reg.each_key { |key, wtime| ... }                # Enumerate subkeys
-# end
+	
 else
   puts Messages.opt_sel_err
 end

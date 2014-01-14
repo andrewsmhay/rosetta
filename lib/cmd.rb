@@ -28,16 +28,16 @@ class Cmd
 			fs_open.close()
 		end
 		def wmic_grp
-			system(wmic GROUP > group.pre)
-		end
-		def netstat_cmd
-			system(net_stat_win+Messages.output_file_net_stat+Variables.fs_ext[0])
+			"wmic GROUP > "
 		end
 		def wmic_usr 
-			system(wmic USERACCOUNT LIST FULL > user.pre)
+			"wmic USERACCOUNT LIST FULL > "
 		end
 		def wmic_srv
-			system(wmic SERVICE LIST FULL > services.pre)
+			"wmic SERVICE LIST FULL > "
+		end
+		def win_reg
+			"reg query "
 		end
 	end
 end

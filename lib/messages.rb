@@ -87,5 +87,17 @@ class Messages
 		def file_footprint_done
 			fs_footprint_fin+Variables.fs_ext[0]+"."
 		end
+		def output_file_reg
+			"registry."
+		end
+		def reg_fp
+			"Footprinting registry..."
+		end
+		def reg_fp_single(root, i, tot)
+			"Footprinting #{root} (#{i+1} of #{tot})"
+		end
+		def reg_fp_done
+			"Finished footprinting registry. Results stored in " + output_file_reg
+		end
 	end
 end
