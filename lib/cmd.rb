@@ -15,12 +15,17 @@ class Cmd
 		def net_stat_win
 			"netstat > "
 		end
-		def list_services(os="")
+		def list_services(os="", fName="")
+			if os === "" && fName === ""
+				puts "Improper call to list_services. Exiting."
+				exit -1
+			end
+
 			case os
 			when "ubuntu", "debian"
-				"sudo initctl list > "
+				"sudo service --status-all > #{fName} 2>&1"
 			when "redhat", "centos"
-				"sudo chkconfig --list > "
+				"sudo chkconfig --list > #{fName}"
 			else
 				"Error. Unsupported os: #{os}. Exiting"
 				exit -1

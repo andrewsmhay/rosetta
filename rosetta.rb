@@ -59,7 +59,7 @@ def footprint_nix(fs_ext = "pre", os="")
 	# Services Information
 	puts ""
 	puts Messages.services_txt
-	system(Cmd.list_services(os)+Messages.output_file_services+fs_ext)
+	system(Cmd.list_services(os, Messages.output_file_services + "." + fs_ext))
 	puts Messages.services_finished+fs_ext+"."
 end
 
