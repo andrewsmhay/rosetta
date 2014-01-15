@@ -45,13 +45,37 @@ def footprint(fs_ext = "pre", os="")
 	end
 end
 
+def cmpSingle(fName="")
+	if fName === ""
+		puts "Invalid call to cmpSingle. Need a file name. Exiting."
+		exit -1
+	end
+
+	f1 = IO.readlines(Variables.workingdir + "/" + fName + ".pre").map(&:chomp)
+	f2 = IO.readlines(Variables.workingdir + "/" + fName + ".post").map(&:chomp)
+	File.open(Variables.workingdir + "/" + fName + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
+end
+
+# delim should be a regex pattern
+def cmpMulti(fName="", delim="")
+	if fName === "" || delim === ""
+		puts "Invalid call to cmpSingle. Need a file name and a delimiting pattern. Exiting."
+		exit -1
+	end
+
+	data_pre = File.open(fName + Variables.fs_ext[0]).read.split(/#{delim}/).map(&:strip)
+	data_post = File.open(fName + Variables.fs_ext[1]).read.split(/#{delim}/).map(&:strip)
+	
+	File.open(Variables.workingdir + "/" + Messages.output_file_reg + Variables.fs_ext[2], "w") do |f|
+		f.write((data_post - data_pre).join("\r\n\r\n"))
+	end
+end
+
 def final_compare_nix
 	# All single line comparisons, so just do a line-by-line set difference.
 	puts Messages.post_a_compare
 	Variables.name_files.each do |naming|
-		f1 = IO.readlines(Variables.workingdir + "/" + naming + ".pre").map(&:chomp)
-		f2 = IO.readlines(Variables.workingdir + "/" + naming + ".post").map(&:chomp)
-		File.open(Variables.workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
+		cmpSingle(naming)
 	end
 	
 	puts Messages.prob_config
@@ -75,19 +99,22 @@ end
 
 def final_compare_win
 	puts Messages.post_a_compare
-	Variables.name_files.each do |naming|
-		f1 = IO.readlines(Variables.workingdir + "/" + naming + ".pre").map(&:chomp)
-		f2 = IO.readlines(Variables.workingdir + "/" + naming + ".post").map(&:chomp)
-		File.open(Variables.workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\r\n")) }
-	end
+	# Variables.name_files.each do |naming|
+	# 	f1 = IO.readlines(Variables.workingdir + "/" + naming + ".pre").map(&:chomp)
+	# 	f2 = IO.readlines(Variables.workingdir + "/" + naming + ".post").map(&:chomp)
+	# 	File.open(Variables.workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\r\n")) }
+	# end
 
-	# Registry has a different operation, so it's not part of the loop above
-	reg_data_pre = File.open(Messages.output_file_reg + Variables.fs_ext[0]).read.split(/\n(?=HKEY)/).map(&:strip)
-	reg_data_post = File.open(Messages.output_file_reg + Variables.fs_ext[1]).read.split(/\n(?=HKEY)/).map(&:strip)
+	# Filesystem, netstat, and groups are single-line output
+	cmpSingle("filesystem")
+	cmpSingle("net_services")
+	cmpSingle("group")
+
+	# Users, service, and registry have multiline output, and require a delimiter to diff the entries
+	cmpMulti("user", "\\n(?=AccountType)")
+	cmpMulti("services", "\\n(?=AcceptPause)")
+	cmpMulti("registry", "\\n(?=HKEY)")
 	
-	File.open(Variables.workingdir + "/" + Messages.output_file_reg + Variables.fs_ext[2], "w") do |f|
-		f.write((reg_data_post - reg_data_pre).join("\r\n\r\n"))
-	end
 
 	puts Messages.post_analysis
 end
