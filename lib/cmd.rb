@@ -3,8 +3,8 @@ require 'messages'
 class Cmd
 	class << self
 
-		nixPathExclude = /^(\.|\/dev|\/proc|\/sys|\/root|\/user\/share\/doc|\/var\/lib\/yum|\/home).+$/
-		winPathExclude = /^(\.|\/\$Recycle\.Bin).*$/
+		@nixPathExclude = /^(\.|\/dev|\/proc|\/sys|\/root|\/user\/share\/doc|\/var\/lib\/yum|\/home).+$/
+		@winPathExclude = /^(\.|\/\$Recycle\.Bin).*$/
 
 		def fs_footprint(fs_ext = "", os="")
 			if os === "" || fs_ext === ""
@@ -19,9 +19,9 @@ class Cmd
 			
 			case os
 			when "windows"
-				exclude = winPathExclude
+				exclude = @winPathExclude
 			else
-				exclude = nixPathExclude
+				exclude = @nixPathExclude
 			end
 
 			f = File.open(Messages.fs_find_file+fs_ext, "w")
