@@ -111,9 +111,9 @@ def final_compare_win
 	cmpSingle("group")
 
 	# Users, service, and registry have multiline output, and require a delimiter to diff the entries
-	cmpMulti("user", "\\n(?=AccountType)")
-	cmpMulti("services", "\\n(?=AcceptPause)")
-	cmpMulti("registry", "\\n(?=HKEY)")
+	cmpMulti(Messages.output_file_user, "\\n(?=AccountType)")
+	cmpMulti(Messages.output_file_services, "\\n(?=AcceptPause)")
+	cmpMulti(Messages.output_file_reg, "\\n(?=HKEY)")
 	
 
 	puts Messages.post_analysis
