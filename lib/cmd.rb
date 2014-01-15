@@ -49,7 +49,7 @@ class Cmd
 				netstatCmdStr = net_stat_nix
 			end
 
-			system(netStatCmdStr+Messages.output_file_net_stat+fs_ext)
+			system(netstatCmdStr+Messages.output_file_net_stat+fs_ext)
 			puts Messages.net_stat_txt_fin+fs_ext+"."
 		end
 
