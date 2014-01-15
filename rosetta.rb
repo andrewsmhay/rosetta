@@ -66,7 +66,7 @@ def cmpMulti(fName="", delim="")
 	data_pre = File.open(fName + Variables.fs_ext[0]).read.split(/#{delim}/).map(&:strip)
 	data_post = File.open(fName + Variables.fs_ext[1]).read.split(/#{delim}/).map(&:strip)
 	
-	File.open(Variables.workingdir + "/" + Messages.output_file_reg + Variables.fs_ext[2], "w") do |f|
+	File.open(Variables.workingdir + "/" + fName + Variables.fs_ext[2], "w") do |f|
 		f.write((data_post - data_pre).join("\r\n\r\n"))
 	end
 end
