@@ -86,7 +86,7 @@ def final_compare_win
 	reg_data_post = File.open(Messages.output_file_reg + Variables.fs_ext[1]).read.split(/\n(?=HKEY)/).map(&:strip)
 	
 	File.open(Variables.workingdir + "/" + Messages.output_file_reg + Variables.fs_ext[2], "w") do |f|
-		f.write((reg_data_post - reg_data_pre).join("\r\n"))
+		f.write((reg_data_post - reg_data_pre).join("\r\n\r\n"))
 	end
 
 	puts Messages.post_analysis
