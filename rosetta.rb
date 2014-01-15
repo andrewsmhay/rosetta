@@ -20,7 +20,7 @@ ARGV.each {|arg| @commands << arg}
 @filetype_ary = []
 
 @nixPathExclude = /^(\.|\/dev|\/proc|\/sys|\/root|\/user\/share\/doc|\/var\/lib\/yum|\/home).+$/
-@winPathExclude = /^(\.|\$Recycle\.Bin).+$/
+@winPathExclude = /^(\.|\/\$Recycle\.Bin).*$/
 
 #############
 # Footprint #
