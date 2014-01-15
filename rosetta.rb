@@ -19,8 +19,8 @@ ARGV.each {|arg| @commands << arg}
 @user_list_txt_fin = []
 @filetype_ary = []
 
-nixPathExclude = /^(\.|/dev|/proc|/sys|/root|/user/share/doc|/var/lib/yum|/home).+$/
-winPathExclude = /^(\.|\$Recycle\.Bin)$/
+@nixPathExclude = /^(\.|\/dev|\/proc|\/sys|\/root|\/user\/share\/doc|\/var\/lib\/yum|\/home).+$/
+@winPathExclude = /^(\.|\$Recycle\.Bin).+$/
 
 #############
 # Footprint #
@@ -32,7 +32,7 @@ def footprint_nix(fs_ext = "pre", os="")
 	puts ""
 	puts Messages.fs_footprint
 	f = File.open(Messages.fs_find_file+fs_ext, "w")
-	Find.find('/'){|path| f.write(path + "\n") unless path =~ nixPathExclude}
+	Find.find('/'){|path| f.write(path + "\n") unless path =~ @nixPathExclude}
 	f.close()
 	puts Messages.fs_footprint_fin+fs_ext+"."
 
@@ -72,7 +72,7 @@ def footprint_win(fs_ext = "pre", os="")
 	puts ""
 	puts Messages.fs_footprint
 	f = File.open(Messages.fs_find_file+fs_ext, "w")
-	Find.find('/'){|path| f.write(path + "\r\n") unless path =~ winPathExclude}
+	Find.find('/'){|path| f.write(path + "\r\n") unless path =~ @winPathExclude}
 	f.close()
 	puts Messages.fs_footprint_fin+fs_ext+"."
 
