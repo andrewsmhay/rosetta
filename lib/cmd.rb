@@ -114,9 +114,9 @@ class Cmd
 
 			case os
 			when "ubuntu", "debian"
-				listServicesCmd = "sudo service --status-all > #{Messages.output_file_services} 2>&1"
+				listServicesCmd = "sudo service --status-all > #{Messages.output_file_services}#{fs_ext} 2>&1"
 			when "redhat", "centos"
-				listServicesCmd = "sudo chkconfig --list > #{Messages.output_file_services}"
+				listServicesCmd = "sudo chkconfig --list > #{Messages.output_file_services}#{fs_ext}"
 			when "windows"
 				listServicesCmd = wmic_srv + Messages.output_file_services + fs_ext
 			else
