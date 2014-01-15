@@ -92,7 +92,6 @@ class Cmd
 			when "windows"
 				system(Cmd.wmic_usr + Messages.output_file_user + fs_ext)
 			else
-				puts Messages.user_list_txt_fp
 				Etc.passwd {|u| user_list_txt_fin << u.name + " = " + u.gecos + "\n"}
 				usr = File.open(Messages.output_file_user+fs_ext, "w")
 				user_list_txt_fin.each { |usr_list| usr.write(usr_list)}
