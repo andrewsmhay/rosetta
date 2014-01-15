@@ -3,8 +3,8 @@ require 'messages'
 class Cmd
 	class << self
 
-		@nixPathExclude = /^(\.|\/dev|\/proc|\/sys|\/root|\/user\/share\/doc|\/var\/lib\/yum|\/home).+$/
-		@winPathExclude = /^(\.|\/\$Recycle\.Bin).*$/
+		@nixPathExclude = "^(\.|\/dev|\/proc|\/sys|\/root|\/user\/share\/doc|\/var\/lib\/yum|\/home).+$"
+		@winPathExclude = "^(\.|\/\$Recycle\.Bin).*$"
 
 		def fs_footprint(fs_ext = "", os="")
 			if os === "" || fs_ext === ""
@@ -12,7 +12,7 @@ class Cmd
 				exit -1
 			end
 
-			exclude = //
+			exclude = ""
 
 			puts ""
 			puts Messages.fs_footprint
@@ -25,7 +25,7 @@ class Cmd
 			end
 
 			f = File.open(Messages.fs_find_file+fs_ext, "w")
-			Find.find('/'){|path| f.write(path + "\n") unless path =~ exclude}
+			Find.find('/'){|path| f.write(path + "\n") unless path =~ /#{exclude}/}
 			f.close()
 
 			puts Messages.fs_footprint_fin+fs_ext+"."
