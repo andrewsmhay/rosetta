@@ -38,7 +38,11 @@ def footprint(fs_ext = "pre", os="")
 	
 	# Services Information
 	Cmd.listServices(fs_ext, os)
-	
+
+	if os === "windows"
+		#Windows Registry
+		Cmd.winReg(fs_ext)
+	end
 end
 
 def final_compare_nix

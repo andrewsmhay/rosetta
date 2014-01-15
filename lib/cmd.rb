@@ -127,6 +127,21 @@ class Cmd
 			puts Messages.services_finished+fs_ext+"."
 		end
 
+		def winReg(fs_ext = "")
+			if fs_ext === ""
+				puts "Invalid call to winReg. Exiting."
+				exit -1
+			end
+
+			puts ""
+			puts Messages.reg_fp
+			Variables.reg_roots.each_with_index do |root, i|
+				puts Messages.reg_fp_single(root, i, Variables.reg_roots.length)
+				system(Cmd.winRegCmd + root + " /s >> registry." + fs_ext)
+			end
+			puts Messages.reg_fp_done + fs_ext
+		end
+
 		def fs_apt_file
 			"apt-file list " + ARGV[0] + " | grep -e share -v | cut -d ' ' -f2 > " + ARGV[0] + ".package"
 		end
@@ -160,7 +175,7 @@ class Cmd
 		def wmic_srv
 			"wmic SERVICE LIST FULL > "
 		end
-		def win_reg
+		def winRegCmd
 			"reg query "
 		end
 	end
