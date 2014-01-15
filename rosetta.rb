@@ -191,7 +191,7 @@ elsif @os_decided == "windows"
 		puts ""
 		puts Messages.services_txt
 		system(Cmd.wmic_srv + Messages.output_file_services + Variables.fs_ext[0])
-		puts Messages.services_txt_fin+Variables.fs_ext[0]+"."
+		puts Messages.services_finished+Variables.fs_ext[0]+"."
 	
 		# Windows Registry
 		puts ""
@@ -235,7 +235,7 @@ elsif @os_decided == "windows"
 		puts ""
 		puts Messages.services_txt
 		system(Cmd.wmic_srv + Messages.output_file_services + Variables.fs_ext[1])
-		puts Messages.services_txt_fin+Variables.fs_ext[1]+"."
+		puts Messages.services_finished+Variables.fs_ext[1]+"."
 		
 		#Windows Registry
 		puts ""
