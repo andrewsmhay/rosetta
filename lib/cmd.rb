@@ -137,7 +137,7 @@ class Cmd
 			puts Messages.reg_fp
 			Variables.reg_roots.each_with_index do |root, i|
 				puts Messages.reg_fp_single(root, i, Variables.reg_roots.length)
-				system(Cmd.winRegCmd + root + " /s >> registry." + fs_ext)
+				system(Cmd.winRegCmd + root + " /s ^| Out-File -encoding ASCII -Append registry." + fs_ext)
 			end
 			puts Messages.reg_fp_done + fs_ext
 		end
@@ -155,7 +155,7 @@ class Cmd
 			"sudo /bin/netstat -tulpn > "
 		end
 		def net_stat_win
-			"netstat > "
+			"powershell.exe -command netstat ^| Out-File -encoding ASCII "
 		end
 		def fs_open
 			File.open(Messages.fs_find_file+Variables.fs_ext[0], "w")
@@ -167,16 +167,16 @@ class Cmd
 			fs_open.close()
 		end
 		def wmic_grp
-			"wmic GROUP > "
+			"powershell.exe -command wmic GROUP ^| Out-File -encoding ASCII "
 		end
 		def wmic_usr 
-			"wmic USERACCOUNT LIST FULL > "
+			"powershell.exe -command wmic USERACCOUNT LIST FULL ^| Out-File -encoding ASCII "
 		end
 		def wmic_srv
-			"wmic SERVICE LIST FULL > "
+			"powershell.exe -command wmic SERVICE LIST FULL ^| Out-File -encoding ASCII "
 		end
 		def winRegCmd
-			"reg query "
+			"powershell.exe -command reg query "
 		end
 	end
 end

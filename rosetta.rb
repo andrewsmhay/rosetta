@@ -51,8 +51,8 @@ def cmpSingle(fName="")
 		exit -1
 	end
 
-	f1 = IO.readlines(Variables.workingdir + "/" + fName + ".pre").map(&:chomp)
-	f2 = IO.readlines(Variables.workingdir + "/" + fName + ".post").map(&:chomp)
+	f1 = IO.readlines(Variables.workingdir + "/" + fName + ".pre").map(&:strip)
+	f2 = IO.readlines(Variables.workingdir + "/" + fName + ".post").map(&:strip)
 	File.open(Variables.workingdir + "/" + fName + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
 end
 
@@ -67,7 +67,7 @@ def cmpMulti(fName="", delim="")
 	data_post = File.open(fName + Variables.fs_ext[1]).read.split(/#{delim}/).map(&:strip)
 	
 	File.open(Variables.workingdir + "/" + fName + Variables.fs_ext[2], "w") do |f|
-		f.write((data_post - data_pre).join("\r\n\r\n"))
+		f.write((data_post - data_pre).join("\n\n"))
 	end
 end
 
@@ -80,7 +80,7 @@ def final_compare_nix
 	
 	puts Messages.prob_config
 
-	IO.readlines(Variables.workingdir + "/filesystem.out").map(&:chomp).each do |filetype|
+	IO.readlines(Variables.workingdir + "/filesystem.out").map(&:strip).each do |filetype|
 		if filetype =~ /\.conf/
 			@filetype_ary << filetype
 		elsif filetype =~ /\.properties/
@@ -102,7 +102,7 @@ def final_compare_win
 	# Variables.name_files.each do |naming|
 	# 	f1 = IO.readlines(Variables.workingdir + "/" + naming + ".pre").map(&:chomp)
 	# 	f2 = IO.readlines(Variables.workingdir + "/" + naming + ".post").map(&:chomp)
-	# 	File.open(Variables.workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\r\n")) }
+	# 	File.open(Variables.workingdir + "/" + naming + ".out", "w"){ |f| f.write((f2 - f1).join("\n")) }
 	# end
 
 	# Filesystem, netstat, and groups are single-line output
