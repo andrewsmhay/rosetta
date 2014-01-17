@@ -6,6 +6,9 @@ class Messages
 		def rh
 			"This is a Red Hat / CentOS based distribution using the yum package manager."
 		end
+		def mac
+			"This is a Mac OS computer."
+		end
 		def ms
 			"This is a Windows based distribution."
 		end

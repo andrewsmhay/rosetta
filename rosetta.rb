@@ -181,6 +181,28 @@ elsif @os_decided == "nix" && File.exist?(Variables.package_rh)
 	else ARGV[1] == Variables.opt_sel[2]
 		final_compare_nix
 	end
+
+############
+# Mac OS X #
+############
+elsif @os_decided == "mac"
+	if ARGV[1] == Variables.opt_sel[0]
+		puts Messages.mac
+		
+		fs_ext = Variables.fs_ext[0]
+
+		footprint(fs_ext, "mac")
+		
+	elsif ARGV[1] == Variables.opt_sel[1]
+		puts Messages.post_fs_footprint 
+		
+		fs_ext = Variables.fs_ext[1]
+		
+		footprint(fs_ext, "mac")
+		
+	else ARGV[1] == Variables.opt_sel[2]
+		final_compare_nix
+	end
 	
 
 #####################

@@ -3,7 +3,8 @@ require 'messages'
 class Cmd
 	class << self
 
-		@@nixPathExclude = "^(\\.|\\/dev|\\/proc|\\/sys|\\/root|\\/user\\/share\\/doc|\\/var\\/lib\\/yum|\\/home).*$"
+		@@nixPathExclude = "^(\\.|\\/dev|\\/proc|\\/sys|\\/root|\\/user\\/share\\/doc|\\/var\\/lib\\/yum).*$"
+		@@macPathExclude = "^(\\.|\\/dev|\\/proc|\\/sys|\\/root|\\/user\\/share\\/doc|\\/Users\\/.+\\/Library\\/Caches).*$"
 		@@winPathExclude = "^(\\.|\\/\\$Recycle\\.Bin).*$"
 
 		def fs_footprint(fs_ext = "", os="")
@@ -20,12 +21,20 @@ class Cmd
 			case os
 			when "windows"
 				exclude = @@winPathExclude
+			when "mac"
+				exclude = @@macPathExclude
 			else
 				exclude = @@nixPathExclude
 			end
 
 			f = File.open(Messages.fs_find_file+fs_ext, "w")
-			Find.find('/'){|path| f.write(path + "\n") unless path =~ /#{exclude}/}
+			Find.find('/') do |path|
+				if path =~ /#{exclude}/
+					Find.prune
+				else
+					f.write(path + "\n")
+				end
+			end
 			f.close()
 
 			puts Messages.fs_footprint_fin+fs_ext+"."
@@ -45,6 +54,8 @@ class Cmd
 			case os
 			when "windows"
 				netstatCmdStr = net_stat_win
+			when "mac"
+				netstatCmdStr = net_stat_mac
 			else
 				netstatCmdStr = net_stat_nix
 			end
@@ -116,6 +127,8 @@ class Cmd
 				listServicesCmd = "sudo service --status-all > #{Messages.output_file_services}#{fs_ext} 2>&1"
 			when "redhat", "centos"
 				listServicesCmd = "sudo chkconfig --list > #{Messages.output_file_services}#{fs_ext}"
+			when "mac", "darwin"
+				listServicesCmd = "sudo launchctl list > #{Messages.output_file_services}#{fs_ext}"
 			when "windows"
 				listServicesCmd = wmic_srv + Messages.output_file_services + fs_ext
 			else
@@ -156,6 +169,9 @@ class Cmd
 		end
 		def net_stat_win
 			"powershell.exe -command netstat ^| Out-File -encoding ASCII "
+		end
+		def net_stat_mac
+			"netstat > "
 		end
 		def fs_open
 			File.open(Messages.fs_find_file+Variables.fs_ext[0], "w")

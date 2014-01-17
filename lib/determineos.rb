@@ -8,7 +8,9 @@ class Determineos
       case host_os
       when /mswin|msys|mingw|bccwin|wince/
         :windows
-      when /darwin|mac os|linux|solaris|bsd/
+      when /darwin|mac os/
+        :mac
+      when /linux|solaris|bsd/
         :nix
       else
         raise Error::WebDriverError, "unknown os: #{host_os.inspect}"
