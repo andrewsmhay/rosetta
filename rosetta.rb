@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
-$LOAD_PATH << File.expand_path('./lib')
+libdir = File.expand_path(File.dirname(__FILE__) + "/lib")
+$LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
+# $LOAD_PATH << File.expand_path('./lib')
 #gems
 require 'rspec'
 require 'find'
