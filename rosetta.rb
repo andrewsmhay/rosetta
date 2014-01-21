@@ -1,17 +1,27 @@
 #!/usr/bin/env ruby
 libdir = File.expand_path(File.dirname(__FILE__) + "/lib")
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
-# $LOAD_PATH << File.expand_path('./lib')
+
 #gems
-require 'rspec'
-require 'find'
-require 'fileutils'
 require 'etc'
+require 'fileutils'
+require 'find'
+require 'ostruct'
+require 'rspec'
 # libs
 require 'determineos'
 require 'messages'
 require 'variables'
 require 'cmd'
+
+@options = OpenStruct.new
+@options.stage = ""
+@options.fs = false
+@options.net = false
+@options.group = false
+@options.user = false
+@options.service = false
+@options.reg = false
 
 @os_select = Determineos.new
 @os_decided = @os_select.os.to_s
@@ -19,6 +29,80 @@ require 'cmd'
 ARGV.each {|arg| @commands << arg}
 @rc_list_txt_fin = []
 @filetype_ary = []
+
+def optsAllFalse
+	@options.fs == false &&
+	@options.net == false &&
+	@options.group == false &&
+	@options.user == false &&
+	@options.service == false &&
+	@options.reg == false
+end
+
+#### Command Line Options ####
+optparse = OptionParser.new do |opts|
+  opts.banner = "Footprint various system components before and after software installation and compare " \
+  "results to see system changes.\n\nUsage: './rosetta.rb [options] <pre|post|final>'. If no options are specified, all footprints are run."
+
+  opts.on("-f", "--filesystem", "Footprint the entire root filesystem.") do
+    @options.fs = true
+  end
+
+  opts.on("-n", "--netstat", "Run netstat to gather network stats.") do
+    @options.net = true
+  end
+
+  opts.on("-g", "--group", "List the system's groups.") do
+    @options.group = true
+  end
+
+  opts.on("-u", "--user", "List the system's users.") do
+    @options.user = true
+  end
+
+  opts.on("-s", "--service", "List the system's services.") do
+    @options.service = true
+  end
+
+  opts.on("-r", "--registry", "Dump the Windows registry.") do
+    @options.reg = true
+  end
+
+  opts.on("-R", "--no-registry", "Run every footprint except the Windows registry.") do
+    @options.fs = true
+		@options.net = true
+		@options.group = true
+		@options.user = true
+		@options.service = true
+  end
+
+  opts.on_tail("-h", "--help", "Show help text") do
+    $stderr.puts opts
+    exit
+  end
+end
+optparse.parse!
+
+# if the options are all false at this point, then no options have been passed, so do all footprints.
+if optsAllFalse
+  @options.fs = true
+	@options.net = true
+	@options.group = true
+	@options.user = true
+	@options.service = true
+	@options.reg = true
+end
+
+# final arguments check for stage of rosetta footprinting
+if ARGV.length != 1 || (ARGV[0] =~ /^(pre|post|final)$/) == nil
+	$stderr.puts "Invalid invocation."
+	$stderr.puts optparse.help
+	exit -1
+else
+	@options.stage = ARGV[0]
+end
+
+#### End of options parsing ####
 
 # Check for data directories
 Variables.fs_ext.each do |dir|
@@ -35,23 +119,23 @@ end
 def footprint(fs_ext = "pre", os="")
 
 	# Filesystem footprinting
-	Cmd.fs_footprint(fs_ext, os)
+	Cmd.fs_footprint(fs_ext, os) if @options.fs
 
 	# Network services
-	Cmd.netstat(fs_ext, os)
+	Cmd.netstat(fs_ext, os) if @options.net
 	
 	# Group information
-	Cmd.listGroups(fs_ext, os)
+	Cmd.listGroups(fs_ext, os) if @options.group
 	
 	# User information
-	Cmd.listUsers(fs_ext, os)
+	Cmd.listUsers(fs_ext, os) if @options.user
 	
 	# Services Information
-	Cmd.listServices(fs_ext, os)
+	Cmd.listServices(fs_ext, os) if @options.service
 
 	if os === "windows"
 		#Windows Registry
-		Cmd.winReg(fs_ext)
+		Cmd.winReg(fs_ext) if @options.reg
 	end
 end
 
@@ -130,7 +214,7 @@ end
 if @os_decided == "nix" && File.exist?(Variables.package_deb)
 	puts Messages.deb
 
-	if ARGV[1] == Variables.opt_sel[0]
+	if @options.stage == Variables.opt_sel[0]
 		fs_ext = Variables.fs_ext[0]
 
 		# apt-file not used anywhere
@@ -153,13 +237,13 @@ if @os_decided == "nix" && File.exist?(Variables.package_deb)
 		
 		footprint(fs_ext, "ubuntu")
 
-	elsif ARGV[1] == Variables.opt_sel[1]
+	elsif @options.stage == Variables.opt_sel[1]
 		fs_ext = Variables.fs_ext[1]
 		puts Messages.post_fs_footprint
 
 		footprint(fs_ext, "ubuntu")
 
-	else ARGV[1] == Variables.opt_sel[2]
+	else @options.stage == Variables.opt_sel[2]
 		final_compare_nix
 	end
 
@@ -168,21 +252,21 @@ if @os_decided == "nix" && File.exist?(Variables.package_deb)
 # Red Hat and CentOS #
 ######################
 elsif @os_decided == "nix" && File.exist?(Variables.package_rh)
-	if ARGV[1] == Variables.opt_sel[0]
+	if @options.stage == Variables.opt_sel[0]
 		puts Messages.rh
 		
 		fs_ext = Variables.fs_ext[0]
 
 		footprint(fs_ext, "redhat")
 		
-	elsif ARGV[1] == Variables.opt_sel[1]
+	elsif @options.stage == Variables.opt_sel[1]
 		puts Messages.post_fs_footprint 
 		
 		fs_ext = Variables.fs_ext[1]
 		
 		footprint(fs_ext, "redhat")
 		
-	else ARGV[1] == Variables.opt_sel[2]
+	else @options.stage == Variables.opt_sel[2]
 		final_compare_nix
 	end
 
@@ -190,21 +274,21 @@ elsif @os_decided == "nix" && File.exist?(Variables.package_rh)
 # Mac OS X #
 ############
 elsif @os_decided == "mac"
-	if ARGV[1] == Variables.opt_sel[0]
+	if @options.stage == Variables.opt_sel[0]
 		puts Messages.mac
 		
 		fs_ext = Variables.fs_ext[0]
 
 		footprint(fs_ext, "mac")
 		
-	elsif ARGV[1] == Variables.opt_sel[1]
+	elsif @options.stage == Variables.opt_sel[1]
 		puts Messages.post_fs_footprint 
 		
 		fs_ext = Variables.fs_ext[1]
 		
 		footprint(fs_ext, "mac")
 		
-	else ARGV[1] == Variables.opt_sel[2]
+	else @options.stage == Variables.opt_sel[2]
 		final_compare_nix
 	end
 	
@@ -213,21 +297,21 @@ elsif @os_decided == "mac"
 # Microsoft Windows #
 #####################
 elsif @os_decided == "windows"
-	if ARGV[1] == Variables.opt_sel[0]
+	if @options.stage == Variables.opt_sel[0]
 		puts Messages.ms
 
 		fs_ext = Variables.fs_ext[0]
 
 		footprint(fs_ext, "windows")
 
-	elsif ARGV[1] == Variables.opt_sel[1]
+	elsif @options.stage == Variables.opt_sel[1]
 		puts Messages.post_fs_footprint
 
 		fs_ext = Variables.fs_ext[1]
 
 		footprint(fs_ext, "windows")
 
-	else ARGV[1] == Variables.opt_sel[2]
+	else @options.stage == Variables.opt_sel[2]
 		final_compare_win
 	end
 	
