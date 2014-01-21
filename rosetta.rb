@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
-libdir = File.expand_path(File.dirname(__FILE__) + "/lib")
+fPath = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
+libdir = File.expand_path(File.dirname(fPath) + "/lib")
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
 #gems
