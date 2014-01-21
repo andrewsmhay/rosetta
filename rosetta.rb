@@ -166,11 +166,14 @@ def cmpMulti(fName="", delim="")
 end
 
 def final_compare_nix
-	# All single line comparisons, so just do a line-by-line set difference.
 	puts Messages.post_a_compare
-	Variables.name_files.each do |naming|
-		cmpSingle(naming+".")
-	end
+
+	# All single line comparisons, so just do a line-by-line set difference.
+	cmpSingle(Messages.fs_find_file) if @options.fs
+	cmpSingle(Messages.output_file_net_stat) if @options.net
+	cmpSingle(Messages.output_file_group) if @options.group
+	cmpSingle(Messages.output_file_user) if @options.user
+	cmpSingle(Messages.output_file_services) if @options.service
 	
 	puts Messages.prob_config
 
