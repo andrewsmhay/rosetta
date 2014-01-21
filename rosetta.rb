@@ -177,21 +177,23 @@ def final_compare_nix
 	
 	puts Messages.prob_config
 
-	IO.readlines("./out/filesystem.out").map(&:strip).each do |filetype|
-		if filetype =~ /\.conf/
-			@filetype_ary << filetype
-		elsif filetype =~ /\.properties/
-			@filetype_ary << filetype
-		elsif filetype =~ /\.config/
-			@filetype_ary << filetype
-		elsif filetype =~ /\.xml/
-			@filetype_ary << filetype
-		elsif filetype =~ /\.json/
-			@filetype_ary << filetype
+	if @options.fs
+		IO.readlines("./out/filesystem.out").map(&:strip).each do |filetype|
+			if filetype =~ /\.conf/
+				@filetype_ary << filetype
+			elsif filetype =~ /\.properties/
+				@filetype_ary << filetype
+			elsif filetype =~ /\.config/
+				@filetype_ary << filetype
+			elsif filetype =~ /\.xml/
+				@filetype_ary << filetype
+			elsif filetype =~ /\.json/
+				@filetype_ary << filetype
+			end
+			File.open("./out/" + Messages.output_filetype_ary+Variables.fs_ext[2], "w"){ |f| f.write((@filetype_ary).join("\n"))}
 		end
-		File.open("./out/" + Messages.output_filetype_ary+Variables.fs_ext[2], "w"){ |f| f.write((@filetype_ary).join("\n"))}
+		puts Messages.post_analysis
 	end
-	puts Messages.post_analysis
 end
 
 def final_compare_win
