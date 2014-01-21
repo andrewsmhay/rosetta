@@ -200,14 +200,14 @@ def final_compare_win
 	puts Messages.post_a_compare
 
 	# Filesystem, netstat, and groups are single-line output
-	cmpSingle(Messages.fs_find_file)
-	cmpSingle(Messages.output_file_net_stat)
-	cmpSingle(Messages.output_file_group)
+	cmpSingle(Messages.fs_find_file) if @options.fs
+	cmpSingle(Messages.output_file_net_stat) if @options.net
+	cmpSingle(Messages.output_file_group) if @options.group
 
 	# Users, service, and registry have multiline output, and require a delimiter to diff the entries
-	cmpMulti(Messages.output_file_user, "\\n(?=AccountType)")
-	cmpMulti(Messages.output_file_services, "\\n(?=AcceptPause)")
-	cmpMulti(Messages.output_file_reg, "\\n(?=HKEY)")
+	cmpMulti(Messages.output_file_user, "\\n(?=AccountType)") if @options.user
+	cmpMulti(Messages.output_file_services, "\\n(?=AcceptPause)") if @options.service
+	cmpMulti(Messages.output_file_reg, "\\n(?=HKEY)") if @options.reg
 
 	puts Messages.post_analysis
 end
