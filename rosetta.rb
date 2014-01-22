@@ -172,7 +172,7 @@ def final_compare
 	if @options.fs
 		config_changed = false
 		IO.readlines("./out/filesystem.out").map(&:strip).each do |filetype|
-			if filetype =~ /^.+(\.conf|\.properties|\.config|\.xml|\.json)$/
+			if filetype =~ /^(\+|-).+(\.conf|\.properties|\.config|\.xml|\.json)$/
 				config_changed = true
 				@filetype_ary << filetype
 
