@@ -67,7 +67,12 @@ optparse = OptionParser.new do |opts|
   end
 
   opts.on("-r", "--registry", "Dump the Windows registry.") do
-    @options.reg = true
+  	if @os_decided != "windows"
+  		$stderr.puts "Error: Not on a Windows system. Cannot footprint the registry."
+  		exit -1
+  	else
+    	@options.reg = true
+    end
   end
 
   opts.on("-R", "--no-registry", "Run every footprint except the Windows registry.") do
