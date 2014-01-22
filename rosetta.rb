@@ -178,7 +178,13 @@ def final_compare
 
 			# keep diff info
 			elsif filetype =~ /---.+$|\+\+\+.+$|^@@.+@@$/
-				@filetype_ary << filetype
+				# if the last line added was also section info, then there were no config files in that section,
+				# so write over the last index instead of appending
+				if @filetype_ary[-1] =~ /^@@.+@@$/
+					@filetype_ary[-1] = filetype
+				else
+					@filetype_ary << filetype
+				end
 			end
 		end
 
