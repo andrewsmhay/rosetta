@@ -7,11 +7,26 @@ Rosetta was designed to automate the pre- and post-installation information gath
 
 ##Requirements
 * require 'rbconfig'
-* require './lib/determineos.rb'
 * require 'find'
 * require 'etc'
+* require 'diffy'
 
 You must also install Ruby 1.8+ and it is recommended that you install git for easy downloading of the repository.
+
+##Installation on Windows:
+
+The [diffy](https://github.com/samg/diffy) gem requires the GNU `which` and `diff` tools. To install them, there are two options:
+
+1.  install unxutils <http://sourceforge.net/projects/unxutils>
+
+    note that these tools contain diff 2.7 which has a different handling of whitespace in the diff results. This makes Diffy spec tests yielding one fail on Windows.
+
+2.  install these two individually from the gnuwin32 project
+    <http://gnuwin32.sourceforge.net/>
+
+    note that this delivers diff 2.8 which makes Diffy spec pass even on Windows.
+
+Then make sure the `bin` folder is in your system path.
 
 ##Usage
 
