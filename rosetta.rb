@@ -25,12 +25,8 @@ require 'cmd'
 @options.service = false
 @options.reg = false
 
-@os_select = Determineos.new
-@os_decided = @os_select.os.to_s
-@commands = []
-ARGV.each {|arg| @commands << arg}
-@rc_list_txt_fin = []
-@filetype_ary = []
+@os_decided = Determineos.new.os.to_s
+@configFiles = []
 
 def optsAllFalse
 	@options.fs == false &&
@@ -171,31 +167,31 @@ def final_compare
 
 	if @options.fs
 		config_changed = false
-		IO.readlines("./out/filesystem.out").map(&:strip).each do |filetype|
-			if filetype =~ /^(\+|-).+(\.conf|\.properties|\.config|\.xml|\.json)$/
+		IO.readlines("./out/filesystem.out").map(&:strip).each do |cfgFile|
+			if cfgFile =~ /^(\+|-).+(\.conf|\.properties|\.config|\.xml|\.json)$/
 				config_changed = true
-				@filetype_ary << filetype
+				@configFiles << cfgFile
 
 			# keep diff info
-			elsif filetype =~ /---.+$|\+\+\+.+$|^@@.+@@$/
+			elsif cfgFile =~ /---.+$|\+\+\+.+$|^@@.+@@$/
 				# if the last line added was also section info, then there were no config files in that section,
 				# so write over the last index instead of appending
-				if @filetype_ary[-1] =~ /^@@.+@@$/
-					@filetype_ary[-1] = filetype
+				if @configFiles[-1] =~ /^@@.+@@$/
+					@configFiles[-1] = cfgFile
 				else
-					@filetype_ary << filetype
+					@configFiles << cfgFile
 				end
 			end
 		end
 
 		# remove sections with no changes concerning config files
 		if config_changed
-			while @filetype_ary[-1] =~ /^@@.+@@$/
-				@filetype_ary.pop
+			while @configFiles[-1] =~ /^@@.+@@$/
+				@configFiles.pop
 			end
 		
 			File.open("./out/" + Messages.output_filetype_ary+Variables.fs_ext[2], "w") do |f|
-				f.write((@filetype_ary).join("\n"))
+				f.write((@configFiles).join("\n"))
 			end
 		end
 
