@@ -175,7 +175,7 @@ def diff(fName="")
 
 	diffData = Diffy::Diff.new("./pre/" + fName + Variables.fs_ext[0], "./post/" + fName + Variables.fs_ext[1],
 		:source => 'files', :include_diff_info => true, :context => 3).to_s(:text)
-	File.open("./out/" + fName + Variables.fs_ext[2], "w") { |f| f.write(diffData) }
+	File.open("./out/" + fName + Variables.fs_ext[2], "w") { |f| f.write(diffData) } unless diffData.empty?
 end
 
 def final_compare_nix
