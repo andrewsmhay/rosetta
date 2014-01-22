@@ -170,34 +170,29 @@ def final_compare
 	puts Messages.prob_config
 
 	if @options.fs
+		config_changed = false
 		IO.readlines("./out/filesystem.out").map(&:strip).each do |filetype|
-			if filetype =~ /\.conf/
-				@filetype_ary << filetype
-			elsif filetype =~ /\.properties/
-				@filetype_ary << filetype
-			elsif filetype =~ /\.config/
-				@filetype_ary << filetype
-			elsif filetype =~ /\.xml/
-				@filetype_ary << filetype
-			elsif filetype =~ /\.json/
+			if filetype =~ /^.+(\.conf|\.properties|\.config|\.xml|\.json)$/
+				config_changed = true
 				@filetype_ary << filetype
 
 			# keep diff info
 			elsif filetype =~ /---.+$|\+\+\+.+$|^@@.+@@$/
 				@filetype_ary << filetype
 			end
+		end
 
-			# remove sections with no changes concerning config files
+		# remove sections with no changes concerning config files
+		if config_changed
 			while @filetype_ary[-1] =~ /^@@.+@@$/
 				@filetype_ary.pop
 			end
-
-			unless @filetype_ary.empty?
-				File.open("./out/" + Messages.output_filetype_ary+Variables.fs_ext[2], "w") do |f|
-					f.write((@filetype_ary).join("\n"))
-				end
+		
+			File.open("./out/" + Messages.output_filetype_ary+Variables.fs_ext[2], "w") do |f|
+				f.write((@filetype_ary).join("\n"))
 			end
 		end
+
 		puts Messages.post_analysis
 	end
 end
