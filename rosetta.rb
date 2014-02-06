@@ -1,8 +1,10 @@
 #!/usr/bin/env ruby
-libdir = File.expand_path(File.dirname(__FILE__) + "/lib")
+fPath = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
+libdir = File.expand_path(File.dirname(fPath) + "/lib")
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
 #gems
+require 'diffy'
 require 'etc'
 require 'fileutils'
 require 'find'
@@ -23,12 +25,8 @@ require 'cmd'
 @options.service = false
 @options.reg = false
 
-@os_select = Determineos.new
-@os_decided = @os_select.os.to_s
-@commands = []
-ARGV.each {|arg| @commands << arg}
-@rc_list_txt_fin = []
-@filetype_ary = []
+@os_decided = Determineos.new.os.to_s
+@configFiles = []
 
 def optsAllFalse
 	@options.fs == false &&
@@ -65,7 +63,12 @@ optparse = OptionParser.new do |opts|
   end
 
   opts.on("-r", "--registry", "Dump the Windows registry.") do
-    @options.reg = true
+  	if @os_decided != "windows"
+  		$stderr.puts "Error: Not on a Windows system. Cannot footprint the registry."
+  		exit -1
+  	else
+    	@options.reg = true
+    end
   end
 
   opts.on("-R", "--no-registry", "Run every footprint except the Windows registry.") do
@@ -139,77 +142,61 @@ def footprint(fs_ext = "pre", os="")
 	end
 end
 
-def cmpSingle(fName="")
+def diff(fName="")
 	if fName === ""
-		puts "Invalid call to cmpSingle. Need a file name. Exiting."
+		puts "Invalid call to diff. Need a file name and a delimiting pattern. Exiting."
 		exit -1
 	end
 
-	f1 = IO.readlines("./pre/" + fName + "pre").map(&:strip)
-	f2 = IO.readlines("./post/" + fName + "post").map(&:strip)
-	File.open("./out/" + fName + "out", "w"){ |f| f.write((f2 - f1).join("\n")) }
+	diffData = Diffy::Diff.new("./pre/" + fName + Variables.fs_ext[0], "./post/" + fName + Variables.fs_ext[1],
+		:source => 'files', :include_diff_info => true, :context => 3).to_s(:text)
+	File.open("./out/" + fName + Variables.fs_ext[2], "w") { |f| f.write(diffData) } unless diffData.empty?
 end
 
-# delim should be a regex pattern
-def cmpMulti(fName="", delim="")
-	if fName === "" || delim === ""
-		puts "Invalid call to cmpSingle. Need a file name and a delimiting pattern. Exiting."
-		exit -1
-	end
-
-	data_pre = File.open("./pre/" + fName + Variables.fs_ext[0]).read.split(/#{delim}/).map(&:strip)
-	data_post = File.open("./post/" + fName + Variables.fs_ext[1]).read.split(/#{delim}/).map(&:strip)
-	
-	File.open("./out/" + fName + Variables.fs_ext[2], "w") do |f|
-		f.write((data_post - data_pre).join("\n\n"))
-	end
-end
-
-def final_compare_nix
+def final_compare
 	puts Messages.post_a_compare
 
-	# All single line comparisons, so just do a line-by-line set difference.
-	cmpSingle(Messages.fs_find_file) if @options.fs
-	cmpSingle(Messages.output_file_net_stat) if @options.net
-	cmpSingle(Messages.output_file_group) if @options.group
-	cmpSingle(Messages.output_file_user) if @options.user
-	cmpSingle(Messages.output_file_services) if @options.service
+	diff(Messages.fs_find_file) if @options.fs
+	diff(Messages.output_file_net_stat) if @options.net
+	diff(Messages.output_file_group) if @options.group
+	diff(Messages.output_file_user) if @options.user
+	diff(Messages.output_file_services) if @options.service
+	diff(Messages.output_file_reg) if @options.reg
 	
 	puts Messages.prob_config
 
 	if @options.fs
-		IO.readlines("./out/filesystem.out").map(&:strip).each do |filetype|
-			if filetype =~ /\.conf/
-				@filetype_ary << filetype
-			elsif filetype =~ /\.properties/
-				@filetype_ary << filetype
-			elsif filetype =~ /\.config/
-				@filetype_ary << filetype
-			elsif filetype =~ /\.xml/
-				@filetype_ary << filetype
-			elsif filetype =~ /\.json/
-				@filetype_ary << filetype
+		config_changed = false
+		IO.readlines("./out/filesystem.out").map(&:strip).each do |cfgFile|
+			if cfgFile =~ /^(\+|-).+(\.conf|\.properties|\.config|\.xml|\.json)$/
+				config_changed = true
+				@configFiles << cfgFile
+
+			# keep diff info
+			elsif cfgFile =~ /---.+$|\+\+\+.+$|^@@.+@@$/
+				# if the last line added was also section info, then there were no config files in that section,
+				# so write over the last index instead of appending
+				if @configFiles[-1] =~ /^@@.+@@$/
+					@configFiles[-1] = cfgFile
+				else
+					@configFiles << cfgFile
+				end
 			end
-			File.open("./out/" + Messages.output_filetype_ary+Variables.fs_ext[2], "w"){ |f| f.write((@filetype_ary).join("\n"))}
 		end
+
+		# remove sections with no changes concerning config files
+		if config_changed
+			while @configFiles[-1] =~ /^@@.+@@$/
+				@configFiles.pop
+			end
+		
+			File.open("./out/" + Messages.output_filetype_ary+Variables.fs_ext[2], "w") do |f|
+				f.write((@configFiles).join("\n"))
+			end
+		end
+
 		puts Messages.post_analysis
 	end
-end
-
-def final_compare_win
-	puts Messages.post_a_compare
-
-	# Filesystem, netstat, and groups are single-line output
-	cmpSingle(Messages.fs_find_file) if @options.fs
-	cmpSingle(Messages.output_file_net_stat) if @options.net
-	cmpSingle(Messages.output_file_group) if @options.group
-
-	# Users, service, and registry have multiline output, and require a delimiter to diff the entries
-	cmpMulti(Messages.output_file_user, "\\n(?=AccountType)") if @options.user
-	cmpMulti(Messages.output_file_services, "\\n(?=AcceptPause)") if @options.service
-	cmpMulti(Messages.output_file_reg, "\\n(?=HKEY)") if @options.reg
-
-	puts Messages.post_analysis
 end
 
 
@@ -221,24 +208,6 @@ if @os_decided == "nix" && File.exist?(Variables.package_deb)
 
 	if @options.stage == Variables.opt_sel[0]
 		fs_ext = Variables.fs_ext[0]
-
-		# apt-file not used anywhere
-		# unless !File.exist?(Variables.package_deb2)
-		# 	puts Messages.apt_present
-		# 	unless system(Cmd.apt_file_inst)
-		# 		puts "Error during installation. Exiting."
-		# 		exit -1
-		# 	end
-		# end
-
-		# chkconfig no longer supported in Ubuntu
-		# unless File.exist?(Variables.package_cc)
-		# 	puts Messages.chkconfig_present
-		# 	unless system(Cmd.apt_file_inst_chk)
-		# 		puts "Error during installation. Exiting."
-		# 		exit -1
-		# 	end
-		# end
 		
 		footprint(fs_ext, "ubuntu")
 
@@ -249,7 +218,7 @@ if @os_decided == "nix" && File.exist?(Variables.package_deb)
 		footprint(fs_ext, "ubuntu")
 
 	else @options.stage == Variables.opt_sel[2]
-		final_compare_nix
+		final_compare
 	end
 
 
@@ -272,7 +241,7 @@ elsif @os_decided == "nix" && File.exist?(Variables.package_rh)
 		footprint(fs_ext, "redhat")
 		
 	else @options.stage == Variables.opt_sel[2]
-		final_compare_nix
+		final_compare
 	end
 
 ############
@@ -294,7 +263,7 @@ elsif @os_decided == "mac"
 		footprint(fs_ext, "mac")
 		
 	else @options.stage == Variables.opt_sel[2]
-		final_compare_nix
+		final_compare
 	end
 	
 
@@ -317,7 +286,7 @@ elsif @os_decided == "windows"
 		footprint(fs_ext, "windows")
 
 	else @options.stage == Variables.opt_sel[2]
-		final_compare_win
+		final_compare
 	end
 	
 else
