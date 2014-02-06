@@ -13,7 +13,13 @@ Rosetta was designed to automate the pre- and post-installation information gath
 
 You must also install Ruby 1.8+ and it is recommended that you install git for easy downloading of the repository.
 
-## Installation on Windows:
+## Installation
+Download or git clone in your directory of choice, and either:
+
+1. `cd` into that directory and run from there with `./rosetta.rb`, or:
+2. add a symbolic link to `/usr/bin` with `sudo ln -s /path/to/rosetta.rb /usr/bin/rosetta` and run with just `rosetta`
+
+### On Windows
 
 The [diffy](https://github.com/samg/diffy) gem requires the GNU `which` and `diff` tools. To install them, there are two options:
 
