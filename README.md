@@ -58,7 +58,7 @@ Finished footprinting service startup state. Results stored in services.pre
 You must then install the application or application stack. Upon completion, continue with the _post_ and _final_ analysis.
 
 ```
-<b>./rosetta.rb post</b>
+./rosetta.rb post
 
 This is a Debian / Ubuntu distro using the apt package manager.
 
@@ -79,7 +79,7 @@ Finished footprinting service startup state. Results stored in services.post.
 ```
 
 ```
-<b>./rosetta.rb final</b>
+./rosetta.rb final
 
 Initalizing post-analysis comparisons...
 Identifying probable configuration files...
