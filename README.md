@@ -30,7 +30,7 @@ Then make sure the `bin` folder is in your system path.
 
 ## Usage
 
-<pre>`
+```
 ./rosetta.rb [options] <i>pre</i> | <i>post | final</i>
 
 e.g.
@@ -51,12 +51,12 @@ Footprinting users...
 Finished footprinting users. Results stored in user.pre.
 
 Footprinting service startup state...
-Finished footprinting service startup state. Results stored in services.pre.
-</code>`
+Finished footprinting service startup state. Results stored in services.pre
+```
 
 You must then install the application or application stack. Upon completion, continue with the <i>post</i> and <i>final</i> analysis.
 
-<pre>`
+```
 <b>./rosetta.rb post</b>
 
 This is a Debian / Ubuntu distro using the apt package manager.
@@ -81,13 +81,13 @@ Finished footprinting service startup state. Results stored in services.post.
 Initalizing post-analysis comparisons...
 Identifying probable configuration files...
 Post-analysis comparisons completed.
-</code>`
+```
 
 (Note: best to run all commands as root or via a user with 'sudo' rights)
 
 You may specify individual footprints, if you only want a few of them.
 
-<pre>`
+```
 <b>./rosetta.rb -ns pre</b>
 This is a Debian / Ubuntu distro using the apt package manager.
 
@@ -96,7 +96,7 @@ Finished footprinting network ports. Results stored in net_services.pre.
 
 Footprinting service startup state...
 Finished footprinting service startup state. Results stored in services.pre.
-</code>`
+```
 
 Run <b>`./rosetta.rb -h`</b> to see a list of the options.
 
