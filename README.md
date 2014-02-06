@@ -29,8 +29,9 @@ The [diffy](https://github.com/samg/diffy) gem requires the GNU `which` and `dif
 Then make sure the `bin` folder is in your system path.
 
 ## Usage
-
 `./rosetta.rb [options] (pre | post | final)`
+
+Before installing some application, run the script with the `pre` command.
 
 e.g.
 
