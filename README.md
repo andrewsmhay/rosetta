@@ -30,11 +30,12 @@ Then make sure the `bin` folder is in your system path.
 
 ## Usage
 
-`./rosetta.rb [options] _pre_ | _post_ | _final_`
+`./rosetta.rb [options] (pre | post | final)`
 
 e.g.
+
 ```
-<b>./rosetta.rb pre</b>
+./rosetta.rb pre
 
 This is a Debian / Ubuntu distro using the apt package manager.
 
@@ -76,6 +77,7 @@ Finished footprinting users. Results stored in user.post.
 Footprinting service startup state...
 Finished footprinting service startup state. Results stored in services.post.
 ```
+
 ```
 <b>./rosetta.rb final</b>
 
@@ -89,7 +91,7 @@ Post-analysis comparisons completed.
 You may specify individual footprints, if you only want a few of them.
 
 ```
-<b>./rosetta.rb -ns pre</b>
+./rosetta.rb -ns pre
 This is a Debian / Ubuntu distro using the apt package manager.
 
 Footprinting network services...
@@ -99,7 +101,7 @@ Footprinting service startup state...
 Finished footprinting service startup state. Results stored in services.pre.
 ```
 
-Run <b>`./rosetta.rb -h`</b> to see a list of the options.
+Run `./rosetta.rb -h` to see a list of the options.
 
 ## Generated Files
 The scripts generate pre, post, and out (final) files for each configuration item tracked.
