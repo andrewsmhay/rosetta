@@ -30,10 +30,10 @@ Then make sure the `bin` folder is in your system path.
 
 ## Usage
 
-```
-./rosetta.rb [options] <i>pre</i> | <i>post | final</i>
+`./rosetta.rb [options] _pre_ | _post_ | _final_`
 
 e.g.
+```
 <b>./rosetta.rb pre</b>
 
 This is a Debian / Ubuntu distro using the apt package manager.
@@ -54,7 +54,7 @@ Footprinting service startup state...
 Finished footprinting service startup state. Results stored in services.pre
 ```
 
-You must then install the application or application stack. Upon completion, continue with the <i>post</i> and <i>final</i> analysis.
+You must then install the application or application stack. Upon completion, continue with the _post_ and _final_ analysis.
 
 ```
 <b>./rosetta.rb post</b>
@@ -75,7 +75,8 @@ Finished footprinting users. Results stored in user.post.
 
 Footprinting service startup state...
 Finished footprinting service startup state. Results stored in services.post.
-
+```
+```
 <b>./rosetta.rb final</b>
 
 Initalizing post-analysis comparisons...
